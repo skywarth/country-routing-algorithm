@@ -1,3 +1,9 @@
+# Country Routing Algorithm 
+
+>AKA: *POOR MAN's ROUTING Algorithm*
+>Because can't really afford APIs
+
+
 Resources:
 
 - Countries db, including lat-long of center
@@ -8,5 +14,10 @@ Method:
 - Undirected graph will be applied
   - Countries gonna be represented by nodes
   - Edges will represent distance between center lat-long of the countries at each end
+- Distance calculation between countries will be made using country's center lat-long point and applying euclidean distance formula. 
+- This algorithm will be used to find possible path(s) to destination country:
 
+  - While current country and destination country does not share borders: 
+    1. Among bordering countries of the current country: get the one with the smaller distance to the destination country. 
+    2. 
 
