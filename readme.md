@@ -4,13 +4,19 @@
 >Because can't really afford APIs
 
 
-Resources:
+## Resources:
 
+### Data
 - Countries db, including lat-long of center
 - Pivot table for bordering countries
 
+### Supplementary and library
+- https://github.com/amejiarosario/dsa.js-data-structures-algorithms-javascript
+- https://github.com/felipernb/algorithms.js
+- https://github.com/avoidwork/tiny-graph
 
-Method:
+
+## Method:
 - Undirected graph will be applied
   - Countries gonna be represented by nodes
   - Edges will represent distance between center lat-long of the countries at each end
