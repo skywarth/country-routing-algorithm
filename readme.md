@@ -1,7 +1,6 @@
 # Country Routing Algorithm 
 
->AKA: *POOR MAN's ROUTING Algorithm*
->Because can't really afford APIs
+>AKA: *POOR MAN's ROUTING Algorithm*. Because can't really afford APIs
 
 
 ## Resources:
