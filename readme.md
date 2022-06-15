@@ -13,6 +13,7 @@
 - https://github.com/amejiarosario/dsa.js-data-structures-algorithms-javascript
 - https://github.com/felipernb/algorithms.js
 - https://github.com/avoidwork/tiny-graph
+- Includes visualization, so a winner: https://github.com/strathausen/dracula
 
 
 ## Method:
@@ -26,3 +27,8 @@
     1. Among bordering countries of the current country: get the one with the smaller distance to the destination country. 
     2. 
 
+
+
+## Credits
+### Resources and libraries
+- https://github.com/strathausen/dracula for graph implementation. Looking good for now, it's strong point is visualization.
