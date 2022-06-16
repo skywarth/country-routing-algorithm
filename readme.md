@@ -13,8 +13,9 @@
 - https://github.com/amejiarosario/dsa.js-data-structures-algorithms-javascript
 - https://github.com/felipernb/algorithms.js
 - https://github.com/avoidwork/tiny-graph
-- Includes visualization, so a winner: https://github.com/strathausen/dracula
-
+- ~~Includes visualization: https://github.com/strathausen/dracula~~
+- this is such an overkill: cytoscape.js
+- https://github.com/avoidwork/tiny-graph simple yet promising
 
 ## Method:
 - Undirected graph will be applied
@@ -31,4 +32,3 @@
 
 ## Credits
 ### Resources and libraries
-- https://github.com/strathausen/dracula for graph implementation. Looking good for now, it's strong point is visualization.
