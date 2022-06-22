@@ -15,7 +15,9 @@
 - https://github.com/avoidwork/tiny-graph
 - ~~Includes visualization: https://github.com/strathausen/dracula~~
 - this is such an overkill: cytoscape.js
-- https://github.com/avoidwork/tiny-graph simple yet promising
+- ~~https://github.com/avoidwork/tiny-graph simple yet promising~~
+- https://github.com/anvaka/ngraph.graph. Problem with undirected edges smh
+- ~~Graphology. man get outta here with your babel crap~~
 
 ## Method:
 - Undirected graph will be applied
