@@ -17,7 +17,8 @@
 - this is such an overkill: cytoscape.js
 - ~~https://github.com/avoidwork/tiny-graph simple yet promising~~
 - https://github.com/anvaka/ngraph.graph. Problem with undirected edges smh
-- ~~Graphology. man get outta here with your babel crap~~
+- Graphology.js Let's stick to this for now, functions are a bit awful but...
+- cytoscape didn't like it much
 
 ## Method:
 - Undirected graph will be applied
