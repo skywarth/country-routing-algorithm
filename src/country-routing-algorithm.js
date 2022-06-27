@@ -10,6 +10,7 @@ class CountryRouting{
     _destinationCountryCode;
 
     _destinationCountry;
+    _originCountry;
 
 
 
@@ -20,6 +21,14 @@ class CountryRouting{
 
     get originCountryCode() {
         return this._originCountryCode;
+    }
+
+    get originCountry() {
+        if(!this._originCountry){
+            this._originCountry=this.graph.getNodeAttributes(this.originCountryCode);
+        }
+
+        return this._originCountry;
     }
 
     get destinationCountryCode() {
@@ -33,6 +42,7 @@ class CountryRouting{
 
         return this._destinationCountry;
     }
+
 
     constructor(graph,originCountryCode,destinationCountryCode) {
         this._graph=graph;
@@ -50,12 +60,21 @@ class CountryRouting{
             moves++;
             //get neighbours
             //calculate each neighbours distance to final destination (no pun intended)
-            countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,source,target){
+            countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
                 let originalAttribute={...edgeAttributes};
-                let a=outerThis.destinationCountry;
-                let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates()
-                debugger
+                let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+                    outerThis.destinationCountry.latlng[0],
+                    outerThis.destinationCountry.latlng[1],
+                    sourceAttr.latlng[0],
+                    sourceAttr.latlng[1],
+                )
+                edgeAttributes.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
             });
+
+            /*countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
+               console.log(edgeAttributes);
+               //ok it really does add it
+            });*/
         }
 
     }
