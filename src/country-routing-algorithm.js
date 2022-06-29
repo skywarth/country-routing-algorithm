@@ -56,9 +56,13 @@ class CountryRouting{
         let found=false;
         let moves=0;
         let outerThis=this;
+
+        /*
+        * we need a method to hold traversed nodes and current node stream
+        * since we are doing DFS-like algorithm, it should really hold the current node stream.
+        * */
         while(!found && moves<this._maxMoveLimiter){
             moves++;
-            //get neighbours
             //calculate each neighbours distance to final destination (no pun intended)
             countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
                 let originalAttribute={...edgeAttributes};
@@ -76,6 +80,10 @@ class CountryRouting{
                //ok it really does add it
             });*/
         }
+    }
+
+
+    someSubRoutine(){
 
     }
 }

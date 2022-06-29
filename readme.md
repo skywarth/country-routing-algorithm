@@ -28,8 +28,9 @@
 - This algorithm will be used to find possible path(s) to destination country:
 
   - While current country and destination country does not share borders: 
-    1. Among bordering countries of the current country: get the one with the smaller distance to the destination country. 
-    2. 
+    1. Among bordering countries of the current country: get the one with the smaller distance to the destination country. (Named C1)
+    2. Move to that country, C1
+    3. If no bordering country is present (excluding the visited ones), or no country is closer to the destination country: start reverting. Trace back steps and try different paths.
 
 
 
