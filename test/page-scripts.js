@@ -52,7 +52,7 @@ async function insertCountriesToGraph(){
 
 
 insertCountriesToGraph();
-let router=new CountryRouting(countriesGraph,'IRA','ITA');
+let router=new CountryRouting(countriesGraph,'IRN','ITA');
 router.findRoute();
 
 

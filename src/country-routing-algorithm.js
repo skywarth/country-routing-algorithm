@@ -57,36 +57,55 @@ class CountryRouting{
         let moves=0;
         let outerThis=this;
 
+        let traversedCountries=[];//country codes
+
+        let currentCountryCode=this.originCountryCode;
+
+
         /*
         * we need a method to hold traversed nodes and current node stream
         * since we are doing DFS-like algorithm, it should really hold the current node stream.
         * */
+        this.someSubRoutine(this.graph,currentCountryCode,this.destinationCountryCode,)
+        debugger
         while(!found && moves<this._maxMoveLimiter){
             moves++;
-            //calculate each neighbours distance to final destination (no pun intended)
-            countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
-                let originalAttribute={...edgeAttributes};
-                let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
-                    outerThis.destinationCountry.latlng[0],
-                    outerThis.destinationCountry.latlng[1],
-                    sourceAttr.latlng[0],
-                    sourceAttr.latlng[1],
-                )
-                edgeAttributes.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
-            });
 
-            /*countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
-               console.log(edgeAttributes);
-               //ok it really does add it
-            });*/
+
+
+
         }
     }
 
 
-    someSubRoutine(){
+    someSubRoutine(graph,currentCountryCode,finalDestinationCountryCode,previous){
 
+        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);
+        debugger
+
+        //calculate each neighbours distance to final destination (no pun intended)
+        countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
+            let originalAttribute={...edgeAttributes};
+            let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+                outerThis.destinationCountry.latlng[0],
+                outerThis.destinationCountry.latlng[1],
+                sourceAttr.latlng[0],
+                sourceAttr.latlng[1],
+            )
+            edgeAttributes.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
+        });
     }
 }
+
+
+
+class NoOtherBorderException extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NoOtherBorderException';
+    }
+}
+
 
 
 
