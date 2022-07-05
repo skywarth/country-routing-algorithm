@@ -50,6 +50,7 @@ class CountryRouting{
         this._destinationCountryCode=destinationCountryCode;
     }
 
+    _moves=0;
 
     findRoute(){//obviously this is not the final name
         let finalRoute=[];
@@ -66,8 +67,15 @@ class CountryRouting{
         * we need a method to hold traversed nodes and current node stream
         * since we are doing DFS-like algorithm, it should really hold the current node stream.
         * */
+
+        //so there is basically two schools of thought to this.
+        //it can either be solved through recursive function
+        //or it can be solved by one-after-another trace method. Trace will hold the current successful traversed.
+
+
         this.someSubRoutine(this.graph,currentCountryCode,this.destinationCountryCode,)
         debugger
+        let traceStack=[];
         while(!found && moves<this._maxMoveLimiter){
             moves++;
 
@@ -78,10 +86,18 @@ class CountryRouting{
     }
 
 
-    someSubRoutine(graph,currentCountryCode,finalDestinationCountryCode,previous){
+    someSubRoutine(graph,traversedCountries,currentCountryCode,finalDestinationCountryCode,previous){
+        this._moves++;
+        if(this._moves>250){
+            alert('aa');
+            return;
+        }
+
 
         let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);
-        debugger
+        if(nonPreviousNeighbors.length===0 && currentCountryCode!==finalDestinationCountryCode){
+            throw new NoOtherBorderException('backup backup !!');
+        }
 
         //calculate each neighbours distance to final destination (no pun intended)
         countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
@@ -94,6 +110,28 @@ class CountryRouting{
             )
             edgeAttributes.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
         });
+
+
+
+        let nextNodeOrdered=[];//insert some entry-level magic here
+        //it will try 0,1,2,3 and so forth
+
+
+        try{
+            let orgArgs={...arguments};
+
+            this.someSubRoutine({
+                ...orgArgs
+
+            });
+        }catch (ex){
+            if(ex instanceof NoOtherBorderException){
+
+            }else{
+                console.error('Something dire just happened.');
+                throw ex;
+            }
+        }
     }
 }
 
