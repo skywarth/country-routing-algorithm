@@ -87,6 +87,7 @@ class CountryRouting{
 
 
     someSubRoutine(graph,traversedCountries,currentCountryCode,finalDestinationCountryCode,previous){
+        let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
             alert('aa');
@@ -118,12 +119,13 @@ class CountryRouting{
 
 
         try{
-            let orgArgs={...arguments};
+            let orgArgs=[...arguments];
+            console.log({orgArgs:orgArgs})
+            let a=this.someSubRoutine(
+                ...arguments
 
-            this.someSubRoutine({
-                ...orgArgs
-
-            });
+            );
+            debugger
         }catch (ex){
             if(ex instanceof NoOtherBorderException){
 
