@@ -69,68 +69,93 @@ class CountryRouting{
         * */
 
         //so there is basically two schools of thought to this.
-        //it can either be solved through recursive function
+        //it can either be solved through recursive function (Applied this)
         //or it can be solved by one-after-another trace method. Trace will hold the current successful traversed.
 
 
-        this.someSubRoutine(this.graph,currentCountryCode,this.destinationCountryCode,)
-        debugger
-        let traceStack=[];
-        while(!found && moves<this._maxMoveLimiter){
-            moves++;
+        let path=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
+        console.info({path:path});
 
-
-
-
-        }
     }
 
 
-    someSubRoutine(graph,traversedCountries,currentCountryCode,finalDestinationCountryCode,previous){
+    someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
+        console.log({previous:previous,currentCountryCode:currentCountryCode})
+
+        if(currentCountryCode===finalDestinationCountryCode){
+            console.log('SOLD !!!');
+            return [previous];
+        }
+
+
+
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
             alert('aa');
-            return;
+            throw 'Max moves achieved';
         }
 
 
-        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);
-        if(nonPreviousNeighbors.length===0 && currentCountryCode!==finalDestinationCountryCode){
-            throw new NoOtherBorderException('backup backup !!');
+        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);//filtering out previous neighbors (the one we come from)
+        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.includes(x));//filtering out already traversed countries
+        visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
+
+
+
+        if(visitableNeighbors.length===0 && currentCountryCode!==finalDestinationCountryCode){
+            throw new NoOtherBorderException('backup, backup !!');
         }
 
         //calculate each neighbours distance to final destination (no pun intended)
-        countriesGraph.forEachEdge('TUR',function(edgeId,edgeAttributes,sourceCode,targetCode,sourceAttr,targetAttr){
-            let originalAttribute={...edgeAttributes};
-            let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
-                outerThis.destinationCountry.latlng[0],
-                outerThis.destinationCountry.latlng[1],
-                sourceAttr.latlng[0],
-                sourceAttr.latlng[1],
-            )
-            edgeAttributes.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
+        countriesGraph.forEachNeighbor(currentCountryCode,function(neighborCountryCode,neighborAttribute){
+
+            if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
+                //debugger
+                return;
+            }
+            if(!neighborAttribute.distanceToFinalDestination){
+                let originalAttribute={...neighborAttribute};
+                let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+                    outerThis.destinationCountry.latlng[0],
+                    outerThis.destinationCountry.latlng[1],
+                    neighborAttribute.latlng[0],
+                    neighborAttribute.latlng[1],
+                )
+                neighborAttribute.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
+            }
+            visitableNeighbors.find(x=>x.countryCode===neighborCountryCode).distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
+
         });
 
 
 
-        let nextNodeOrdered=[];//insert some entry-level magic here
+        let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
         //it will try 0,1,2,3 and so forth
+        let neighborToVisitCounter=0;
+
+        traversedCountries.push({countryCode: currentCountryCode});
 
 
         try{
-            let orgArgs=[...arguments];
-            console.log({orgArgs:orgArgs})
-            let a=this.someSubRoutine(
-                ...arguments
+
+            let previousArray=this.someSubRoutine(
+                graph,
+                traversedCountries,
+                visitableNeighborsByDistance[neighborToVisitCounter].countryCode,//next neighbor to visit
+                finalDestinationCountryCode,
+                currentCountryCode,//for previous
 
             );
-            debugger
+            return [...previousArray,previous];
+
         }catch (ex){
             if(ex instanceof NoOtherBorderException){
+            console.error('NoOtherBorderException caught');
+
+
 
             }else{
-                console.error('Something dire just happened.');
                 throw ex;
             }
         }
