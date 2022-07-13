@@ -80,7 +80,7 @@ class CountryRouting{
 
 
     someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
-        console.log({previous:previous,currentCountryCode:currentCountryCode})
+        console.log({previous:previous,currentCountryCode:currentCountryCode});
 
         if(currentCountryCode===finalDestinationCountryCode){
             console.log('SOLD !!!');
@@ -98,7 +98,8 @@ class CountryRouting{
 
 
         let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);//filtering out previous neighbors (the one we come from)
-        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.includes(x));//filtering out already traversed countries
+        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.includes(x.countryCode));//filtering out already traversed countries
+        console.log({visitableNeighbors:visitableNeighbors});
         visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
 
 
