@@ -84,7 +84,7 @@ class CountryRouting{
 
         if(currentCountryCode===finalDestinationCountryCode){
             console.log('SOLD !!!');
-            return [previous];
+            return [previous];//put these to a standard bozo, It's hideous to have multiple return statements
         }
 
 
@@ -130,12 +130,18 @@ class CountryRouting{
         });
 
 
+        traversedCountries.push({countryCode: currentCountryCode});
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
         //it will try 0,1,2,3 and so forth
+
         let neighborToVisitCounter=0;
 
-        traversedCountries.push({countryCode: currentCountryCode});
+        if(visitableNeighborsByDistance.some(x=>x.countryCode===finalDestinationCountryCode)){//wait does it even make sense ? I think it is utter BS
+            //means final destination country is in our reach, it is our dear neighbor !
+
+            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.countryCode===finalDestinationCountryCode);
+        }
 
 
         try{
@@ -149,6 +155,7 @@ class CountryRouting{
 
             );
             return [...previousArray,previous];
+            //ok the problem is we are returning only the previous array, but it should also return traversedCountries array too, right ?
 
         }catch (ex){
             if(ex instanceof NoOtherBorderException){

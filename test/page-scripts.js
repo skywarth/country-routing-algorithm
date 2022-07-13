@@ -56,7 +56,7 @@ let router=new CountryRouting(countriesGraph,'IRN','ITA');
 
 router.findRoute();
 
-let router2=new CountryRouting(countriesGraph,'OMN','GBR');
+let router2=new CountryRouting(countriesGraph,'OMN','GBR'); //you silly of course this'll cause exception, but we did it to test the exception right ?
 router2.findRoute()
 /*
 
