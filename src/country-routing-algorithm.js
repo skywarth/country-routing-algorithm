@@ -73,18 +73,26 @@ class CountryRouting{
         //or it can be solved by one-after-another trace method. Trace will hold the current successful traversed.
 
 
-        let path=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
-        console.info({path:path});
+        let response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
+        console.info({response:response});
 
     }
 
 
     someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
+        traversedCountries.push({countryCode: currentCountryCode});
+
+        const response={
+            previous:previous,
+            traversedCountries:traversedCountries,
+            foundPath:[currentCountryCode]
+        };
         console.log({previous:previous,currentCountryCode:currentCountryCode});
 
         if(currentCountryCode===finalDestinationCountryCode){
             console.log('SOLD !!!');
-            return [previous];//put these to a standard bozo, It's hideous to have multiple return statements
+            //return [previous];//put these to a standard bozo, It's hideous to have multiple return statements
+            return response;
         }
 
 
@@ -93,14 +101,15 @@ class CountryRouting{
         this._moves++;
         if(this._moves>250){
             alert('aa');
-            throw 'Max moves achieved';
+            throw new MaxAllowedMovesAchieved('backup, backup !!');
         }
 
 
-        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous);//filtering out previous neighbors (the one we come from)
-        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.includes(x.countryCode));//filtering out already traversed countries
-        console.log({visitableNeighbors:visitableNeighbors});
-        visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
+        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
+
+        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.find(y=>y.countryCode===x.countryCode));//filtering out already traversed countries
+
+        //visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
 
 
 
@@ -130,12 +139,15 @@ class CountryRouting{
         });
 
 
-        traversedCountries.push({countryCode: currentCountryCode});
+        //console.log({traversed:[...traversedCountries]});
+
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
         //it will try 0,1,2,3 and so forth
 
         let neighborToVisitCounter=0;
+
+        console.log(visitableNeighborsByDistance);
 
         if(visitableNeighborsByDistance.some(x=>x.countryCode===finalDestinationCountryCode)){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
@@ -146,7 +158,7 @@ class CountryRouting{
 
         try{
 
-            let previousArray=this.someSubRoutine(
+            let childResponse=this.someSubRoutine(
                 graph,
                 traversedCountries,
                 visitableNeighborsByDistance[neighborToVisitCounter].countryCode,//next neighbor to visit
@@ -154,7 +166,9 @@ class CountryRouting{
                 currentCountryCode,//for previous
 
             );
-            return [...previousArray,previous];
+            //return [...previousArray,previous];
+            response.foundPath=[...response.foundPath,...childResponse.foundPath];
+            return response;
             //ok the problem is we are returning only the previous array, but it should also return traversedCountries array too, right ?
 
         }catch (ex){
@@ -171,11 +185,26 @@ class CountryRouting{
 }
 
 
+class AbstractCountryRoutingException extends Error {
+    constructor(message) {
+        super(message);
+        this.exceptionType='CountryRoutingException';
+        this.name = 'AbstractCountryRoutingException - DO NOT USE IT';
+    }
+}
 
-class NoOtherBorderException extends Error {
+
+class NoOtherBorderException extends AbstractCountryRoutingException {
     constructor(message) {
         super(message);
         this.name = 'NoOtherBorderException';
+    }
+}
+
+class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
+    constructor(message) {
+        super(message);
+        this.name = 'MaxAllowedMovesAchieved';
     }
 }
 
