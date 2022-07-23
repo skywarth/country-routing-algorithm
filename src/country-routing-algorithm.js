@@ -156,31 +156,40 @@ class CountryRouting{
         }
 
 
-        try{
+        let noOtherBorderException;
+        do{
+            try{
+                let childResponse=this.someSubRoutine(
+                    graph,
+                    traversedCountries,
+                    visitableNeighborsByDistance[neighborToVisitCounter].countryCode,//next neighbor to visit
+                    finalDestinationCountryCode,
+                    currentCountryCode,//for previous
 
-            let childResponse=this.someSubRoutine(
-                graph,
-                traversedCountries,
-                visitableNeighborsByDistance[neighborToVisitCounter].countryCode,//next neighbor to visit
-                finalDestinationCountryCode,
-                currentCountryCode,//for previous
+                );
+                //return [...previousArray,previous];
+                response.foundPath=[...response.foundPath,...childResponse.foundPath];
+                return response;
+                //ok the problem is we are returning only the previous array, but it should also return traversedCountries array too, right ?
 
-            );
-            //return [...previousArray,previous];
-            response.foundPath=[...response.foundPath,...childResponse.foundPath];
-            return response;
-            //ok the problem is we are returning only the previous array, but it should also return traversedCountries array too, right ?
-
-        }catch (ex){
-            if(ex instanceof NoOtherBorderException){
-            console.error('NoOtherBorderException caught');
+            }catch (ex){
+                if(ex instanceof NoOtherBorderException){
+                    console.info('NoOtherBorderException caught');
+                    neighborToVisitCounter++;
+                    if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
+                        throw new NoOtherBorderException('backup, backup !!');
+                    }
+                    noOtherBorderException=true;
 
 
-
-            }else{
-                throw ex;
+                }else{
+                    throw ex;
+                }
             }
-        }
+        }while(noOtherBorderException);
+
+
+
     }
 }
 
