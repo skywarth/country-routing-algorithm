@@ -100,7 +100,6 @@ class CountryRouting{
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
-            alert('aa');
             throw new MaxAllowedMovesAchieved('backup, backup !!');
         }
 

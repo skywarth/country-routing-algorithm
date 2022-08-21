@@ -2,6 +2,15 @@
 
 >AKA: *POOR MAN's ROUTING Algorithm*. Because can't really afford APIs
 
+## TODO List
+- calculate the total distance to be traversed:
+  - Yeah we return the path/route but the distance ? It's the whole point of this
+- Handle max moves exceeded
+  - It should pick among traversed countries which is the closest to the final destination. 
+  - Then return a routing to that closest country
+  - Btw there is possibly something wrong with the traversed countries array. When i was experimenting with something else, i noticed both duplicate and different distance values.
+
+
 
 ## Resources:
 
