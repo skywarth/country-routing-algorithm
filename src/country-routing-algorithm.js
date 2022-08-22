@@ -79,7 +79,9 @@ class CountryRouting{
             if(ex instanceof MaxAllowedMovesAchieved){
                 let sorted=ex.traversedCountries.sort((a, b) => a.distance - b.distance);
                 console.log(sorted);
-                console.log({closestIs:sorted[0]})
+                console.log({closestIs:sorted[0]});
+                //now that we know the closest country, we can route from point A to this country.
+                //apply that here
             }
         }
 
