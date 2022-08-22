@@ -58,7 +58,6 @@ class CountryRouting{
         let moves=0;
         let outerThis=this;
 
-        let traversedCountries=[];//country codes
 
         let currentCountryCode=this.originCountryCode;
 
@@ -73,14 +72,23 @@ class CountryRouting{
         //or it can be solved by one-after-another trace method. Trace will hold the current successful traversed.
 
 
-        let response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
-        console.info({response:response});
+        try{
+            let response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
+            console.info({response:response});
+        }catch (ex){
+            if(ex instanceof MaxAllowedMovesAchieved){
+                let sorted=ex.traversedCountries.sort((a, b) => a.distance - b.distance);
+                console.log(sorted);
+                console.log({closestIs:sorted[0]})
+            }
+        }
+
+
 
     }
 
 
     someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
-        traversedCountries.push({countryCode: currentCountryCode});
 
         const response={
             previous:previous,
@@ -100,7 +108,7 @@ class CountryRouting{
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
-            throw new MaxAllowedMovesAchieved('backup, backup !!');
+            throw new MaxAllowedMovesAchieved('backup, backup !!',traversedCountries);
         }
 
 
@@ -158,6 +166,12 @@ class CountryRouting{
         let noOtherBorderException;
         do{
             try{
+                let haventTraversed=traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
+                if(haventTraversed){
+                    traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distance:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                }
+
+
                 let childResponse=this.someSubRoutine(
                     graph,
                     traversedCountries,
@@ -169,7 +183,6 @@ class CountryRouting{
                 //return [...previousArray,previous];
                 response.foundPath=[...response.foundPath,...childResponse.foundPath];
                 return response;
-                //ok the problem is we are returning only the previous array, but it should also return traversedCountries array too, right ?
 
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
@@ -181,7 +194,10 @@ class CountryRouting{
                     noOtherBorderException=true;
 
 
-                }else{
+                }else if(ex instanceof MaxAllowedMovesAchieved){
+                    throw ex;
+                }
+                else{
                     throw ex;
                 }
             }
@@ -210,9 +226,16 @@ class NoOtherBorderException extends AbstractCountryRoutingException {
 }
 
 class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
-    constructor(message) {
+    constructor(message,traversedCountries) {
         super(message);
         this.name = 'MaxAllowedMovesAchieved';
+        this._traversedCountries=traversedCountries;
+    }
+
+    _traversedCountries;
+
+    get traversedCountries(){
+        return this._traversedCountries;
     }
 }
 
