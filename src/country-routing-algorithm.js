@@ -71,21 +71,24 @@ class CountryRouting{
         //it can either be solved through recursive function (Applied this)
         //or it can be solved by one-after-another trace method. Trace will hold the current successful traversed.
 
-
+        let response;
         try{
-            let response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
-            console.info({response:response});
+            response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
+
         }catch (ex){
             if(ex instanceof MaxAllowedMovesAchieved){
-                let sorted=ex.traversedCountries.sort((a, b) => a.distance - b.distance);
+                console.info({exceptionTraversed:ex.traversedCountries});
+                let sorted=ex.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 console.log(sorted);
                 console.log({closestIs:sorted[0]});
+                this._moves=0;
+                response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
                 //now that we know the closest country, we can route from point A to this country.
                 //apply that here
             }
         }
 
-
+        console.info({response:response});
 
     }
 
@@ -95,7 +98,7 @@ class CountryRouting{
         const response={
             previous:previous,
             traversedCountries:traversedCountries,
-            foundPath:[currentCountryCode]
+            foundPath:[currentCountryCode] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
         };
         console.log({previous:previous,currentCountryCode:currentCountryCode});
 
@@ -170,7 +173,7 @@ class CountryRouting{
             try{
                 let haventTraversed=traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
                 if(haventTraversed){
-                    traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distance:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                    traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
                 }
 
 
