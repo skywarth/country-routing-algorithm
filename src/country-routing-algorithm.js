@@ -1,4 +1,39 @@
 
+class RoutingResult{
+    _foundPath=[];
+    _traversedCountries=[];
+    _pathCountryCount=0;
+    _isClosest=false;
+
+    _fromCountryCode='';
+    _toCountryCode='';
+
+
+    get isClosest() {
+        return this._isClosest;
+    }
+
+    foundPath(includingTheFromCountry=false) {
+        let path=[];
+        if(includingTheFromCountry){
+            path=[
+                {countryCode:this._fromCountryCode,distanceToFinalDestination:this.pathDistance,distanceBetweenNode:0},
+
+            ]
+        }
+        path=[...path,...this._foundPath];
+        return path;
+    }
+
+    get pathDistance() {
+        return this._foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+    }
+
+    get pathCountryCount() {
+        return this._foundPath.length;
+    }
+}
+
 
 class CountryRouting{
 
@@ -79,17 +114,14 @@ class CountryRouting{
             if(ex instanceof MaxAllowedMovesAchieved){
                 console.info({exceptionTraversed:ex.traversedCountries});
                 let sorted=ex.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
-                console.log(sorted);
                 console.log({closestIs:sorted[0]});
                 this._moves=0;
                 response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
-                //now that we know the closest country, we can route from point A to this country.
-                //apply that here
+                response.isClosest=true;
             }
         }
-
-        console.info({response:response});
-
+        response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+        return response;
     }
 
 
@@ -98,7 +130,7 @@ class CountryRouting{
         const response={
             previous:previous,
             traversedCountries:traversedCountries,
-            foundPath:[currentCountryCode] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
+            foundPath:[/*currentCountryCode*/] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
         };
         console.log({previous:previous,currentCountryCode:currentCountryCode});
 
@@ -129,9 +161,11 @@ class CountryRouting{
             throw new NoOtherBorderException('backup, backup !!');
         }
 
+
         //calculate each neighbours distance to final destination (no pun intended)
         countriesGraph.forEachNeighbor(currentCountryCode,function(neighborCountryCode,neighborAttribute){
 
+            let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
             if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
                 //debugger
                 return;
@@ -146,7 +180,15 @@ class CountryRouting{
                 )
                 neighborAttribute.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
             }
-            visitableNeighbors.find(x=>x.countryCode===neighborCountryCode).distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
+
+            visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
+
+            countriesGraph.findEdge(currentCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+                visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
+                //debugger
+            })
+
+
 
         });
 
@@ -186,7 +228,8 @@ class CountryRouting{
 
                 );
                 //return [...previousArray,previous];
-                response.foundPath=[...response.foundPath,...childResponse.foundPath];
+                //response.foundPath=[...response.foundPath,...childResponse.foundPath];
+                response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
                 return response;
 
             }catch (ex){
