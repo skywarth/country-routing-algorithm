@@ -1,6 +1,8 @@
 # Country Routing Algorithm 
 
->AKA: *POOR MAN's ROUTING Algorithm*. Because can't really afford APIs
+>AKA: *POOR MAN's ROUTING Algorithm*. Because you can't really afford APIs
+
+Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
 ## TODO List
 - calculate the total distance to be traversed:
@@ -9,6 +11,9 @@
   - It should pick among traversed countries which is the closest to the final destination. 
   - Then return a routing to that closest country
   - Btw there is possibly something wrong with the traversed countries array. When i was experimenting with something else, i noticed both duplicate and different distance values.
+- visualize
+  - the graph
+  - world map
 
 
 

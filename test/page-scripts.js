@@ -1,27 +1,10 @@
 console.log(countriesDataset);
 
 
-//let countriesGraph = createGraph({multigraph:true});
 
 const {UndirectedGraph, DirectedGraph} = graphology;
 let countriesGraph=new UndirectedGraph();
-/*
-countriesGraph.addNode('whaddup',{'yoo':'111'});
-countriesGraph.addNode('whaddup2',{'yoo':'222'});
 
-
-countriesGraph.addEdge('whaddup','whaddup2',{
-    'heres':'johnny'
-})
-
-console.log(countriesGraph.hasEdge('whaddup2','whaddup'));
-console.log(countriesGraph.hasEdge('whaddup','whaddup2'));
-
-
-countriesGraph.addEdge('whaddup','whaddup2',{
-    'heres':'johnny'
-})
-*/
 
 
 async function insertCountriesToGraph(){
@@ -55,24 +38,53 @@ insertCountriesToGraph();
 /*let router=new CountryRouting(countriesGraph,'IRN','ITA');
 const routingResult=router.findRoute();*/
 
+/*
 let router2=new CountryRouting(countriesGraph,'IND','CHE');
 const routingResult=router2.findRoute();
+*/
 
 /*let router2=new CountryRouting(countriesGraph,'OMN','GBR'); //you silly of course this'll cause exception, but we did it to test the exception right ?
 const routingResult=router2.findRoute();*/
 
-console.log(routingResult);
-/*
+//console.log(routingResult);
 
 
 
-function testDuplicateProperty(arr,propName){
-    //this proves we cannot use 'area' as unique identifier
-    //cca3 or similar one is better, probably.
-    let normalized=arr.map(x=>x[propName]);
-    let isDuplicate=normalized.some(function(item,index){
-        return normalized.indexOf(item) !== index
-    });
-    return isDuplicate;
+
+function fillInCountriesToSelect(selectDOM){
+    //TODO: fix the global var, hobo...
+    countriesGraph.forEachNode(function (node,attr,qwe){
+        let domNode=document.createElement('option');
+        let text=`${attr.name.common} (${attr.cca3}) ${attr.flag}`;
+        domNode.innerText=text;
+        domNode.value=attr.cca3;
+        selectDOM.appendChild(domNode)
+
+    })
 }
-*/
+
+const originCountrySelectDOM=document.querySelector('#originCountrySelect');
+const destinationCountrySelectDOM=document.querySelector('#destinationCountrySelect');
+const findRouteButton=document.querySelector('#findRouteButton');
+
+fillInCountriesToSelect(originCountrySelectDOM)
+fillInCountriesToSelect(destinationCountrySelectDOM)
+
+function getOriginCountrySelectedValue(){
+    //TODO: make into getter (encapsulation)
+    return originCountrySelectDOM.value;
+}
+
+function getDestinationCountrySelectedValue(){
+    //TODO: make into getter (encapsulation)
+    return destinationCountrySelectDOM.value;
+}
+
+findRouteButton.addEventListener('click',function(e){
+    //TODO: fix the global var below, hobo...
+    const router=new CountryRouting(countriesGraph,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
+
+    const routingResult=router.findRoute();
+
+    console.log(routingResult);
+})
