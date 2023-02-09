@@ -1,0 +1,39 @@
+{
+  "name": "country-routing-algorithm",
+  "version": "1.0.0",
+  "description": "Graph based algorithm for traversing and finding the shortest path between two countries",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skywarth/country-routing-algorithm.git"
+  },
+  "keywords": [
+    "graph",
+    "country",
+    "routing",
+    "path",
+    "finding",
+    "dsa",
+    "algorithm",
+    "country",
+    "routing",
+    "traverse",
+    "shortest",
+    "path"
+  ],
+  "author": "Yiğit Kürşad Ersoy",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/skywarth/country-routing-algorithm/issues"
+  },
+  "homepage": "https://github.com/skywarth/country-routing-algorithm#readme",
+  "devDependencies": {
+    "jest": "^29.4.2"
+  }
+}
