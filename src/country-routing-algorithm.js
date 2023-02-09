@@ -163,7 +163,7 @@ class CountryRouting{
 
 
         //calculate each neighbours distance to final destination (no pun intended)
-        countriesGraph.forEachNeighbor(currentCountryCode,function(neighborCountryCode,neighborAttribute){
+        graph.forEachNeighbor(currentCountryCode,function(neighborCountryCode,neighborAttribute){
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
             if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
@@ -183,7 +183,7 @@ class CountryRouting{
 
             visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
 
-            countriesGraph.findEdge(currentCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+            graph.findEdge(currentCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
                 //debugger
             })
