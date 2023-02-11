@@ -47,6 +47,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
     3. If no bordering country is present (excluding the visited ones), or no country is closer to the destination country: start reverting. Trace back steps and try different paths.
 
 
+- Technical note: it returns isClosest:true if the target cannot be reached through land (e.g: Malta)
 
 ## Credits
 ### Resources and libraries

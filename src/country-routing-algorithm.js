@@ -170,7 +170,10 @@ class CountryRouting{
                 //debugger
                 return;
             }
+            /*
+            //ok now I remember. This section is to prevent re-calculation of distance to final destination each time we pass through this said none
             if(!neighborAttribute.distanceToFinalDestination){
+
                 let originalAttribute={...neighborAttribute};
                 let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
                     outerThis.destinationCountry.latlng[0],
@@ -182,7 +185,13 @@ class CountryRouting{
             }
 
             visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
-
+            */
+            visitableNeighbor.distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+                outerThis.destinationCountry.latlng[0],
+                outerThis.destinationCountry.latlng[1],
+                neighborAttribute.latlng[0],
+                neighborAttribute.latlng[1],
+            );
             graph.findEdge(currentCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
                 //debugger
