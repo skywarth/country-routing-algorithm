@@ -3,8 +3,8 @@ console.log(countriesDataset);
 
 
 const {UndirectedGraph, DirectedGraph} = graphology;
+import * as CountryRouting from "../src/country-routing-algorithm.js"
 let countriesGraph=new UndirectedGraph();
-
 
 
 async function insertCountriesToGraph(){
@@ -18,7 +18,7 @@ async function insertCountriesToGraph(){
             if(!countriesGraph.hasEdge(country.cca3,borderCountryCode)){
                 //add border as an edge if not declared previously (undirected)
                 let borderingCountryNode=countriesGraph.getNodeAttributes(borderCountryCode);
-                let sphericalDistanceBetween=distanceInKmBetweenEarthCoordinates(
+                let sphericalDistanceBetween=CountryRouting.Utils.distanceInKmBetweenEarthCoordinates(
                     country.latlng[0],
                     country.latlng[1],
                     borderingCountryNode.latlng[0],
@@ -82,7 +82,7 @@ function getDestinationCountrySelectedValue(){
 
 findRouteButton.addEventListener('click',function(e){
     //TODO: fix the global var below, hobo...
-    const router=new CountryRouting(countriesGraph,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
+    const router=new CountryRouting.CountryRouting(countriesGraph,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
 
     const routingResult=router.findRoute();
 

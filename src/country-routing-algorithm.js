@@ -1,3 +1,5 @@
+import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
+import Utils from "./utils.js"
 
 class RoutingResult{
     _foundPath=[];
@@ -118,6 +120,8 @@ class CountryRouting{
                 this._moves=0;
                 response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
                 response.isClosest=true;
+            }else{
+                throw ex;
             }
         }
         response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
@@ -175,7 +179,7 @@ class CountryRouting{
             if(!neighborAttribute.distanceToFinalDestination){
 
                 let originalAttribute={...neighborAttribute};
-                let distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+                let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
                     outerThis.destinationCountry.latlng[0],
                     outerThis.destinationCountry.latlng[1],
                     neighborAttribute.latlng[0],
@@ -186,7 +190,7 @@ class CountryRouting{
 
             visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
             */
-            visitableNeighbor.distanceToFinalDestination=distanceInKmBetweenEarthCoordinates(
+            visitableNeighbor.distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
                 outerThis.destinationCountry.latlng[0],
                 outerThis.destinationCountry.latlng[1],
                 neighborAttribute.latlng[0],
@@ -266,66 +270,4 @@ class CountryRouting{
 }
 
 
-class AbstractCountryRoutingException extends Error {
-    constructor(message) {
-        super(message);
-        this.exceptionType='CountryRoutingException';
-        this.name = 'AbstractCountryRoutingException - DO NOT USE IT';
-    }
-}
-
-
-class NoOtherBorderException extends AbstractCountryRoutingException {
-    constructor(message) {
-        super(message);
-        this.name = 'NoOtherBorderException';
-    }
-}
-
-class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
-    constructor(message,traversedCountries) {
-        super(message);
-        this.name = 'MaxAllowedMovesAchieved';
-        this._traversedCountries=traversedCountries;
-    }
-
-    _traversedCountries;
-
-    get traversedCountries(){
-        return this._traversedCountries;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/* UTILS */
-function degreesToRadians(degrees) {
-    //thanks SO
-    return degrees * Math.PI / 180;
-}
-
-function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
-    //thanks SO
-    var earthRadiusKm = 6371;
-
-    var dLat = degreesToRadians(lat2-lat1);
-    var dLon = degreesToRadians(lon2-lon1);
-
-    lat1 = degreesToRadians(lat1);
-    lat2 = degreesToRadians(lat2);
-
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return earthRadiusKm * c;
-}
-/* UTILS */
+export {CountryRouting,Utils}
