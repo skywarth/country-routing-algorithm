@@ -1,6 +1,6 @@
 //we do a little trolling.
 //but not my fault though, `assert { type: "json" };` is not yet supported on firefox
-const countriesDataset=
+export const countriesDataset=
     JSON.parse(//how about some async dear ? this may load really slow on slow computers. Wait, what if it's the reason ..?
     `
     [

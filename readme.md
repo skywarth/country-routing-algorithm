@@ -14,6 +14,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - visualize
   - the graph
   - world map
+- Unit tests
 
 
 
@@ -48,6 +49,11 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 
 
 - Technical note: it returns isClosest:true if the target cannot be reached through land (e.g: Malta)
+
+### Notes
+- Distinction between `graphology` dependencies
+  - Unit tests use node version of `graphology`, so you need to `npm install` to run unit tests
+  - Meanwhile the `demo/index.html` and `page-script.js` use classic javascript file version of `graphology`. 
 
 ## Credits
 ### Resources and libraries
