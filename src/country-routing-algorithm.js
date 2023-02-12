@@ -2,37 +2,43 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 
 class RoutingResult{
-    _foundPath=[];
-    _traversedCountries=[];
-    _pathCountryCount=0;
-    _isClosest=false;
+    #foundPath=[];
+    #traversedCountries=[];
 
-    _fromCountryCode='';
-    _toCountryCode='';
+    #fromCountryCode='';
+    #toCountryCode='';
 
 
     get isClosest() {
-        return this._isClosest;
+
     }
 
     foundPath(includingTheFromCountry=false) {
         let path=[];
         if(includingTheFromCountry){
             path=[
-                {countryCode:this._fromCountryCode,distanceToFinalDestination:this.pathDistance,distanceBetweenNode:0},
+                {countryCode:this.#fromCountryCode,distanceToFinalDestination:this.pathDistance,distanceBetweenNode:0},
 
             ]
         }
-        path=[...path,...this._foundPath];
+        path=[...path,...this.#foundPath];
         return path;
     }
 
     get pathDistance() {
-        return this._foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+        return this.#foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
     }
 
     get pathCountryCount() {
-        return this._foundPath.length;
+        return this.#foundPath.length;
+    }
+
+
+    constructor(foundPath, traversedCountries, fromCountryCode, toCountryCode) {
+        this.#foundPath = foundPath;
+        this.#traversedCountries = traversedCountries;
+        this.#fromCountryCode = fromCountryCode;
+        this.#toCountryCode = toCountryCode;
     }
 }
 
