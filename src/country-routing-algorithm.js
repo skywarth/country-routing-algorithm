@@ -9,11 +9,28 @@ class RoutingResult{
     #toCountryCode='';
 
 
+    set foundPath(value) {
+        this.#foundPath = value;
+    }
+
     get isClosest() {
 
     }
 
-    foundPath(includingTheFromCountry=false) {
+
+    get traversedCountries() {
+        return this.#traversedCountries;
+    }
+
+    get fromCountryCode() {
+        return this.#fromCountryCode;
+    }
+
+    get toCountryCode() {
+        return this.#toCountryCode;
+    }
+
+    getFoundPath(includingTheFromCountry=false) {
         let path=[];
         if(includingTheFromCountry){
             path=[
@@ -116,7 +133,11 @@ class CountryRouting{
 
         let response;
         try{
-            response=this.someSubRoutine(this.graph,[],currentCountryCode,this.destinationCountryCode,null);
+            response=this.someSubRoutine(
+                this.graph,
+                new RoutingResult([],[],this.originCountryCode,this.destinationCountryCode),
+                null
+            );
 
         }catch (ex){
             if(ex instanceof MaxAllowedMovesAchieved){
@@ -130,21 +151,29 @@ class CountryRouting{
                 throw ex;
             }
         }
-        response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+        //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
         return response;
     }
 
 
-    someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
+    //someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
+    someSubRoutine(graph,routingResult,previous){
 
+        /*
         const response={
             previous:previous,
             traversedCountries:traversedCountries,
-            foundPath:[/*currentCountryCode*/] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
+            foundPath:[] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
         };
-        console.log({previous:previous,currentCountryCode:currentCountryCode});
+        */
+        const response={
+            previous:previous,
+            routingResult:routingResult
+        }
 
-        if(currentCountryCode===finalDestinationCountryCode){
+        console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
+
+        if(routingResult.fromCountryCode===routingResult.toCountryCode){
             console.log('SOLD !!!');
             //return [previous];//put these to a standard bozo, It's hideous to have multiple return statements
             return response;
@@ -155,25 +184,25 @@ class CountryRouting{
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
-            throw new MaxAllowedMovesAchieved('max moves achieved !!',traversedCountries);
+            throw new MaxAllowedMovesAchieved('max moves achieved !!',response);
         }
 
 
-        let nonPreviousNeighbors=graph.neighbors(currentCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
+        let nonPreviousNeighbors=graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
 
-        let visitableNeighbors=nonPreviousNeighbors.filter(x => !traversedCountries.find(y=>y.countryCode===x.countryCode));//filtering out already traversed countries
+        let visitableNeighbors=nonPreviousNeighbors.filter(x => !routingResult.traversedCountries.find(y=>y.countryCode===x.countryCode));//filtering out already traversed countries
 
         //visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
 
 
 
-        if(visitableNeighbors.length===0 && currentCountryCode!==finalDestinationCountryCode){
+        if(visitableNeighbors.length===0 && routingResult.fromCountryCode!==routingResult.toCountryCode){
             throw new NoOtherBorderException('backup, backup !!');
         }
 
 
         //calculate each neighbours distance to final destination (no pun intended)
-        graph.forEachNeighbor(currentCountryCode,function(neighborCountryCode,neighborAttribute){
+        graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
             if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
@@ -202,7 +231,7 @@ class CountryRouting{
                 neighborAttribute.latlng[0],
                 neighborAttribute.latlng[1],
             );
-            graph.findEdge(currentCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+            graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
                 //debugger
             })
@@ -222,33 +251,44 @@ class CountryRouting{
 
         console.log(visitableNeighborsByDistance);
 
-        if(visitableNeighborsByDistance.some(x=>x.countryCode===finalDestinationCountryCode)){//wait does it even make sense ? I think it is utter BS
+        if(visitableNeighborsByDistance.some(x=>x.countryCode===routingResult.toCountryCode)){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
 
-            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.countryCode===finalDestinationCountryCode);
+            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.countryCode===routingResult.toCountryCode);
         }
 
 
         let noOtherBorderException;
         do{
             try{
-                let haventTraversed=traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
+                let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
                 if(haventTraversed){
-                    traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                    routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
                 }
+
+
+
+                let recursionRoutingResult=new RoutingResult(
+                        [],
+                        routingResult.traversedCountries,
+                        visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
+                        routingResult.toCountryCode
+                );
 
 
                 let childResponse=this.someSubRoutine(
                     graph,
-                    traversedCountries,
-                    visitableNeighborsByDistance[neighborToVisitCounter].countryCode,//next neighbor to visit
-                    finalDestinationCountryCode,
-                    currentCountryCode,//for previous
+                    recursionRoutingResult,
+                    routingResult.fromCountryCode,//for previous
 
                 );
                 //return [...previousArray,previous];
                 //response.foundPath=[...response.foundPath,...childResponse.foundPath];
-                response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
+                //response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
+
+                recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
+                response.routingResult=recursionRoutingResult;
+
                 return response;
 
             }catch (ex){
