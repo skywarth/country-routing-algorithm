@@ -274,17 +274,16 @@ class CountryRouting{
 
 
 
-                let recursionRoutingResult=new RoutingResult(
-                        [],
-                        routingResult.traversedCountries,
-                        visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
-                        routingResult.toCountryCode
-                );
 
 
                 let childResponse=this.someSubRoutine(
                     graph,
-                    recursionRoutingResult,
+                    new RoutingResult(
+                        [],
+                        routingResult.traversedCountries,
+                        visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
+                        routingResult.toCountryCode
+                    ),
                     routingResult.fromCountryCode,//for previous
 
                 );
@@ -293,7 +292,12 @@ class CountryRouting{
                 //response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
 
                 //recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
-                recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
+                let recursionRoutingResult=new RoutingResult(
+                    [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    routingResult.traversedCountries,
+                    routingResult.fromCountryCode,
+                    routingResult.toCountryCode
+                )
                 response.routingResult=recursionRoutingResult;
 
                 return response;
