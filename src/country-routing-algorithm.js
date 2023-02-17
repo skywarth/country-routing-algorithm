@@ -9,11 +9,28 @@ class RoutingResult{
     #toCountryCode='';
 
 
+    set foundPath(value) {
+        this.#foundPath = value;
+    }
+
     get isClosest() {
 
     }
 
-    foundPath(includingTheFromCountry=false) {
+
+    get traversedCountries() {
+        return this.#traversedCountries;
+    }
+
+    get fromCountryCode() {
+        return this.#fromCountryCode;
+    }
+
+    get toCountryCode() {
+        return this.#toCountryCode;
+    }
+
+    getFoundPath(includingTheFromCountry=false) {
         let path=[];
         if(includingTheFromCountry){
             path=[
@@ -130,8 +147,10 @@ class CountryRouting{
                 throw ex;
             }
         }
-        response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
-        return response;
+
+        //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+        return new RoutingResult(response.foundPath,response.traversedCountries,this.originCountryCode,response.toCountryCode);
+
     }
 
 
