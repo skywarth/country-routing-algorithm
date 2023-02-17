@@ -158,7 +158,7 @@ class CountryRouting{
             }
         }
         //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
-        return response;
+        return response.routingResult;
     }
 
 
@@ -196,8 +196,15 @@ class CountryRouting{
 
         let nonPreviousNeighbors=graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
 
-        let visitableNeighbors=nonPreviousNeighbors.filter(x => !routingResult.traversedCountries.find(y=>y.countryCode===x.countryCode));//filtering out already traversed countries
+        let visitableNeighbors=nonPreviousNeighbors.filter(x =>
+            (
+                !routingResult.traversedCountries.find(y=>y.countryCode===x.countryCode) && //filtering out already traversed countries
 
+                //This one was discovered during tests. When routing from Finland to Germany, it was first going through Norway, Sweden, Finland, Russia. It doesn't make sense to revisit the origin country.
+                x.countryCode!==this.originCountryCode //filtering out origin country
+            )
+
+        );
         //visitableNeighbors=visitableNeighbors.map((y)=>({'countryCode':y}));
 
 
