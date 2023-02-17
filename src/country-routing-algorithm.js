@@ -141,11 +141,17 @@ class CountryRouting{
 
         }catch (ex){
             if(ex instanceof MaxAllowedMovesAchieved){
-                console.info({exceptionTraversed:ex.traversedCountries});
-                let sorted=ex.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
+                console.log({ex:ex});
+                let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 console.log({closestIs:sorted[0]});
                 this._moves=0;
-                response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
+                //response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
+                response=this.someSubRoutine(
+                    this.graph,
+                    new RoutingResult(
+                        [],[],this.originCountryCode,sorted[0].countryCode
+                    )
+                    );
                 response.isClosest=true;
             }else{
                 throw ex;
@@ -184,7 +190,7 @@ class CountryRouting{
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
         if(this._moves>250){
-            throw new MaxAllowedMovesAchieved('max moves achieved !!',response);
+            throw new MaxAllowedMovesAchieved('max moves achieved !!',routingResult,previous);
         }
 
 
@@ -286,6 +292,7 @@ class CountryRouting{
                 //response.foundPath=[...response.foundPath,...childResponse.foundPath];
                 //response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
 
+                //recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
                 recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
                 response.routingResult=recursionRoutingResult;
 
