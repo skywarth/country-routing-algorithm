@@ -9,9 +9,6 @@ class RoutingResult{
     #toCountryCode='';
 
 
-    set foundPath(value) {
-        this.#foundPath = value;
-    }
 
     get isClosest() {
 
@@ -134,7 +131,6 @@ class CountryRouting{
         let response;
         try{
             response=this.someSubRoutine(
-                this.graph,
                 new RoutingResult([],[],this.originCountryCode,this.destinationCountryCode),
                 null
             );
@@ -147,7 +143,6 @@ class CountryRouting{
                 this._moves=0;
                 //response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
                 response=this.someSubRoutine(
-                    this.graph,
                     new RoutingResult(
                         [],[],this.originCountryCode,sorted[0].countryCode
                     )
@@ -163,7 +158,7 @@ class CountryRouting{
 
 
     //someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
-    someSubRoutine(graph,routingResult,previous){
+    someSubRoutine(routingResult,previous){
 
         /*
         const response={
@@ -194,7 +189,7 @@ class CountryRouting{
         }
 
 
-        let nonPreviousNeighbors=graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
+        let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
 
         let visitableNeighbors=nonPreviousNeighbors.filter(x =>
             (
@@ -215,7 +210,7 @@ class CountryRouting{
 
 
         //calculate each neighbours distance to final destination (no pun intended)
-        graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
+        this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
             if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
@@ -244,7 +239,7 @@ class CountryRouting{
                 neighborAttribute.latlng[0],
                 neighborAttribute.latlng[1],
             );
-            graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+            outerThis.graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
                 //debugger
             })
@@ -284,7 +279,6 @@ class CountryRouting{
 
 
                 let childResponse=this.someSubRoutine(
-                    graph,
                     new RoutingResult(
                         [],
                         routingResult.traversedCountries,
