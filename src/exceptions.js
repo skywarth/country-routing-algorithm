@@ -17,16 +17,22 @@ class NoOtherBorderException extends AbstractCountryRoutingException {
 }
 
 class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
-    constructor(message,traversedCountries) {
+    constructor(message,lastRoutingResult,previous) {
         super(message);
         this.name = 'MaxAllowedMovesAchieved';
-        this._traversedCountries=traversedCountries;
+        this.#lastRoutingResult=lastRoutingResult;
+        this.#previous=previous;
     }
 
-    _traversedCountries;
+    #lastRoutingResult;
+    #previous;
 
-    get traversedCountries(){
-        return this._traversedCountries;
+    get lastRoutingResult(){
+        return this.#lastRoutingResult;
+    }
+
+    get previous(){
+        return this.#previous;
     }
 }
 
