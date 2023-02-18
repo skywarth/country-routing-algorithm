@@ -159,24 +159,15 @@ class CountryRouting{
 
     //someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
     someSubRoutine(routingResult,previous){
-
-        /*
-        const response={
-            previous:previous,
-            traversedCountries:traversedCountries,
-            foundPath:[] //TODO: contains objects in this format: {countryCode,distanceToFinalDestination,distanceFromPrevNode}
-        };
-        */
         const response={
             previous:previous,
             routingResult:routingResult
         }
 
-        console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
+        //console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
 
         if(routingResult.fromCountryCode===routingResult.toCountryCode){
-            console.log('SOLD !!!');
-            //return [previous];//put these to a standard bozo, It's hideous to have multiple return statements
+            //console.log('SOLD !!!');
             return response;
         }
 
@@ -214,7 +205,6 @@ class CountryRouting{
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
             if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
-                //debugger
                 return;
             }
             /*
@@ -241,7 +231,6 @@ class CountryRouting{
             );
             outerThis.graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
-                //debugger
             })
 
 
@@ -249,15 +238,12 @@ class CountryRouting{
         });
 
 
-        //console.log({traversed:[...traversedCountries]});
-
-
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
         //it will try 0,1,2,3 and so forth
 
         let neighborToVisitCounter=0;
 
-        console.log(visitableNeighborsByDistance);
+        //console.log(visitableNeighborsByDistance);
 
         if(visitableNeighborsByDistance.some(x=>x.countryCode===routingResult.toCountryCode)){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
@@ -288,11 +274,6 @@ class CountryRouting{
                     routingResult.fromCountryCode,//for previous
 
                 );
-                //return [...previousArray,previous];
-                //response.foundPath=[...response.foundPath,...childResponse.foundPath];
-                //response.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.foundPath];
-
-                //recursionRoutingResult.foundPath=[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()];
                 let recursionRoutingResult=new RoutingResult(
                     [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
                     routingResult.traversedCountries,
@@ -305,7 +286,7 @@ class CountryRouting{
 
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
-                    console.info('NoOtherBorderException caught');
+                    //console.info('NoOtherBorderException caught');
                     neighborToVisitCounter++;
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
                         throw new NoOtherBorderException('backup, backup !!');

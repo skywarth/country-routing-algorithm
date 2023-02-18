@@ -92,7 +92,7 @@ describe('Land routing', function () {
             assert.equal(routingResult.getFoundPath(true)[1].countryCode, 'CHE');
         });
 
-        it.only('Should go through Norway when routing from Finland to Germany', function () {
+        it('Should go through Norway when routing from Finland to Germany', function () {
             //bruh dataset doesn't acknowledge Sweden having border with Denmark :(
             const graphController=new GraphController(countriesDataset,new Graph());
             graphController.insertCountriesToGraph();
@@ -108,14 +108,13 @@ describe('Land routing', function () {
 
 
     describe("Shouldn't Cycle on the starting country", function () {
-        it.only('Should go through Denmark when routing from Finland to Germany', function () {
+        it('Should go through Denmark when routing from Finland to Germany', function () {
 
             const graphController=new GraphController(countriesDataset,new Graph());
             graphController.insertCountriesToGraph();
             let router=new CountryRouting.CountryRouting(graphController.graphInstance,'FIN','DEU');
             const routingResult=router.findRoute();
 
-            console.log({xx:routingResult});
             let startingCountryReached=routingResult.getFoundPath(false).some(x=>x.countryCode==='FIN');
 
             assert.equal(startingCountryReached,false);
