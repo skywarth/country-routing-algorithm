@@ -24,6 +24,7 @@ export default class GraphController{
     }
 
     async insertCountriesToGraph(){
+        this.graphInstance.clear();
         this.countriesDataset.forEach((country)=>{
             this.graphInstance.addNode(country.cca3,country);
         });

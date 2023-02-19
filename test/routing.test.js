@@ -104,7 +104,47 @@ describe('Land routing', function () {
 
 
         });
+
+        it('Should go through France when routing from Spain to Lithuania', function () {
+            const graphController=new GraphController(countriesDataset,new Graph());
+            graphController.insertCountriesToGraph();
+            let router=new CountryRouting.CountryRouting(graphController.graphInstance,'ESP','LTU');
+            const routingResult=router.findRoute();
+
+            assert.equal(routingResult.getFoundPath(true).some(x=>x.countryCode==='FRA'),true);
+
+
+
+        });
+
+        it.only('Should navigate through only European countries when navigating from Denmark to Croatia', function () {
+            const graphController=new GraphController(countriesDataset,new Graph());
+            graphController.insertCountriesToGraph();
+            let router=new CountryRouting.CountryRouting(graphController.graphInstance,'DNK','HRV');
+            const routingResult=router.findRoute();
+
+            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+                let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
+                assert.equal('Europe',attr.region,`Navigated through ${attr.name.common} even though it is not in Europe`);
+            })
+
+        });
     });
+
+    describe('Africa', function () {
+        it.only('Should navigate through only North African countries when navigating from Morocco to Syria', function () {
+            const graphController=new GraphController(countriesDataset,new Graph());
+            graphController.insertCountriesToGraph();
+            let router=new CountryRouting.CountryRouting(graphController.graphInstance,'MAR','EGY');
+            const routingResult=router.findRoute();
+
+            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+                let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
+                assert.equal('Northern Africa',attr.subregion,`Navigated through ${attr.name.common} even though it is not in Northern Africa`);
+            })
+
+        });
+    })
 
 
     describe("Shouldn't Cycle on the starting country", function () {
