@@ -130,7 +130,7 @@ class CountryRouting{
 
         let response;
         try{
-            response=this.someSubRoutine(
+            response=this.iterate(
                 new RoutingResult([],[],this.originCountryCode,this.destinationCountryCode),
                 null
             );
@@ -141,8 +141,8 @@ class CountryRouting{
                 let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 console.log({closestIs:sorted[0]});
                 this._moves=0;
-                //response=this.someSubRoutine(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
-                response=this.someSubRoutine(
+                //response=this.iterate(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
+                response=this.iterate(
                     new RoutingResult(
                         [],[],this.originCountryCode,sorted[0].countryCode
                     )
@@ -157,8 +157,8 @@ class CountryRouting{
     }
 
 
-    //someSubRoutine(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
-    someSubRoutine(routingResult,previous){
+    //iterate(graph,traversedCountries=[],currentCountryCode,finalDestinationCountryCode,previous){
+    iterate(routingResult, previous){
         const response={
             previous:previous,
             routingResult:routingResult
@@ -264,7 +264,7 @@ class CountryRouting{
 
 
 
-                let childResponse=this.someSubRoutine(
+                let childResponse=this.iterate(
                     new RoutingResult(
                         [],
                         routingResult.traversedCountries,
