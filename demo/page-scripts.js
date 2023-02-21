@@ -18,7 +18,7 @@ await graphController.insertCountriesToGraph();
 
 
 function fillInCountriesToSelect(selectDOM){
-    graphController.graphInstance.forEachNode(function (node,attr,qwe){
+    graphController.graphInstance.forEachNode(function (node,attr){
         let domNode=document.createElement('option');
         let text=`${attr.name.common} (${attr.cca3}) ${attr.flag}`;
         domNode.innerText=text;
