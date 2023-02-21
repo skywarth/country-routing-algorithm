@@ -4,16 +4,19 @@ import Utils from "./utils.js"
 class RoutingResult{
     #foundPath=[];
     #traversedCountries=[];
+    #isClosest=false;
 
     #fromCountryCode='';
     #toCountryCode='';
 
 
-
     get isClosest() {
-
+        return this.#isClosest;
     }
 
+    set isClosest(value) {
+        this.#isClosest = value;
+    }
 
     get traversedCountries() {
         return this.#traversedCountries;
@@ -147,7 +150,7 @@ class CountryRouting{
                         [],[],this.originCountryCode,sorted[0].countryCode
                     )
                     );
-                response.isClosest=true;
+                response.routingResult.isClosest=true;
             }else{
                 throw ex;
             }
