@@ -46,7 +46,7 @@ function getDestinationCountrySelectedValue(){
 }
 
 findRouteButton.addEventListener('click',function(e){
-    const router=new CountryRouting.CountryRouting(graphController.graphInstance,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
+    const router=new CountryRouting.CountryRouting(graphController.graphInstance,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue(),true);
 
     const routingResult=router.findRoute();
 

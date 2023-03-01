@@ -6,6 +6,24 @@ import RoutingResult from "./routing-result.js"
 export {CountryRouting,Utils}
 
 
+const nullifierProxy = {
+
+    //beautiful, thanks for the inspiration: https://stackoverflow.com/a/36111385
+    get(target, prop) {
+        const origMethod = target[prop];
+        if (typeof origMethod === "undefined") {
+            return function (...args) {
+                //get nullified lmao. Suppressed!
+            }
+        }else{
+            return function (...args) {
+                return origMethod.apply(target, args);
+            }
+        }
+    }
+
+};
+
 class CountryRouting{
 
     _maxMoveLimiter=150
@@ -17,6 +35,9 @@ class CountryRouting{
 
     _destinationCountry;
     _originCountry;
+
+    _debugMode;
+    _consoleProxy=null;
 
 
 
@@ -49,11 +70,22 @@ class CountryRouting{
         return this._destinationCountry;
     }
 
+    get console(){
+        if(this._consoleProxy===null){
+            this._consoleProxy=new Proxy(
+                this._debugMode?console:{},
+                nullifierProxy
+            )
+        }
+        return this._consoleProxy;
+    }
 
-    constructor(graph,originCountryCode,destinationCountryCode) {
+
+    constructor(graph,originCountryCode,destinationCountryCode,debugMode=false) {
         this._graph=graph;
         this._originCountryCode=originCountryCode;
         this._destinationCountryCode=destinationCountryCode;
+        this._debugMode=debugMode;
     }
 
     _moves=0;
@@ -86,9 +118,10 @@ class CountryRouting{
 
         }catch (ex){
             if(ex instanceof MaxAllowedMovesAchieved){
-                console.log({ex:ex});
+                this.console.log('qqqq');
+                this.console.log({ex:ex});
                 let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
-                console.log({closestIs:sorted[0]});
+                this.console.log({closestIs:sorted[0]});
                 this._moves=0;
                 //response=this.iterate(this.graph,[],currentCountryCode,sorted[0].countryCode,null);
                 response=this.iterate(
