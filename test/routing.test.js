@@ -205,6 +205,62 @@ describe('Standard land routing, no overseas', function () {
     });
 });
 
+describe('Should find the closest point to destination for oversea targets',function () {
+
+    describe('Destination: Europe',function () {
+        it('Should route to [France, Belgium or Netherlands] when routing from Turkey to United Kingdom', function () {
+
+            let expectedClosestDestinations=['FRA','BEL','NLD'];
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'TUR', 'GBR');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            assert.ok(
+                expectedClosestDestinations.includes(finalDestination.countryCode),
+                `Closest point is not among the expected, got ${finalDestination.countryCode}`
+            )
+        });
+        it('Should route to [Denmark, Netherlands or Norway] when routing from Greece to Iceland', function () {
+
+            let expectedClosestDestinations=['DNK','NLD','NOR'];
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'GRC', 'ISL');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            assert.ok(
+                expectedClosestDestinations.includes(finalDestination.countryCode),
+                `Closest point is not among the expected, got ${finalDestination.countryCode}`
+            )
+        });
+    });
+
+    describe('Destination: North America',function () {
+        it('Should route to [Western Sahara or Mauritania] when routing from Kazakhstan to United States of America', function () {
+
+            let expectedClosestDestinations=['ESH','MRT'];
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'KAZ', 'USA');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            assert.ok(
+                expectedClosestDestinations.includes(finalDestination.countryCode),
+                `Closest point is not among the expected, got ${finalDestination.countryCode}`
+            )
+        });
+    });
 
 
 
+});
