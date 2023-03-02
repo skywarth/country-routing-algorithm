@@ -1,28 +1,13 @@
 import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
+import {NullifierProxyHandler} from "./nullifier-proxy.js"
 
 //maybe export RoutingResult too
 export {CountryRouting,Utils}
 
 
-const nullifierProxy = {
 
-    //beautiful, thanks for the inspiration: https://stackoverflow.com/a/36111385
-    get(target, prop) {
-        const origMethod = target[prop];
-        if (typeof origMethod === "undefined") {
-            return function (...args) {
-                //get nullified lmao. Suppressed!
-            }
-        }else{
-            return function (...args) {
-                return origMethod.apply(target, args);
-            }
-        }
-    }
-
-};
 
 class CountryRouting{
 
@@ -72,20 +57,29 @@ class CountryRouting{
 
     get console(){
         if(this._consoleProxy===null){
+            //to prevent creating duplicate instances, single proxy instance should suffice
             this._consoleProxy=new Proxy(
-                this._debugMode?console:{},
-                nullifierProxy
+                this.debugMode?console:{},
+                NullifierProxyHandler
             )
         }
         return this._consoleProxy;
     }
 
 
+    get debugMode() {
+        return this._debugMode;
+    }
+
+    set debugMode(value) {
+        this._debugMode = value;
+    }
+
     constructor(graph,originCountryCode,destinationCountryCode,debugMode=false) {
         this._graph=graph;
         this._originCountryCode=originCountryCode;
         this._destinationCountryCode=destinationCountryCode;
-        this._debugMode=debugMode;
+        this.debugMode=debugMode;
     }
 
     _moves=0;
@@ -118,7 +112,6 @@ class CountryRouting{
 
         }catch (ex){
             if(ex instanceof MaxAllowedMovesAchieved){
-                this.console.log('qqqq');
                 this.console.log({ex:ex});
                 let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 this.console.log({closestIs:sorted[0]});
@@ -146,10 +139,10 @@ class CountryRouting{
             routingResult:routingResult
         }
 
-        //console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
+        this.console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
 
         if(routingResult.fromCountryCode===routingResult.toCountryCode){
-            //console.log('SOLD !!!');
+            this.console.log('SOLD !!!');
             return response;
         }
 
@@ -225,7 +218,7 @@ class CountryRouting{
 
         let neighborToVisitCounter=0;
 
-        //console.log(visitableNeighborsByDistance);
+        this.console.log(visitableNeighborsByDistance);
 
         if(visitableNeighborsByDistance.some(x=>x.countryCode===routingResult.toCountryCode)){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
