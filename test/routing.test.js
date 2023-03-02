@@ -205,7 +205,7 @@ describe('Standard land routing, no overseas', function () {
     });
 });
 
-describe('Should find the closest point to destination for oversea targets',function () {
+describe('Should find the closest land route destination for oversea destinations',function () {
 
     describe('Destination: Europe',function () {
         it('Should route to [France, Belgium or Netherlands] when routing from Turkey to United Kingdom', function () {
@@ -242,10 +242,10 @@ describe('Should find the closest point to destination for oversea targets',func
         });
     });
 
-    describe('Destination: North America',function () {
-        it('Should route to [Western Sahara or Mauritania] when routing from Kazakhstan to United States of America', function () {
+    describe('Destination: Americas',function () {
+        it('Should route to Norway when routing from Kazakhstan to United States of America', function () {
 
-            let expectedClosestDestinations=['ESH','MRT'];
+
 
             const graphController = new GraphController(countriesDataset, new Graph());
             graphController.insertCountriesToGraph();
@@ -254,12 +254,65 @@ describe('Should find the closest point to destination for oversea targets',func
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
             let finalDestination=routingResult.getFoundPath(true).pop();
-            assert.ok(
-                expectedClosestDestinations.includes(finalDestination.countryCode),
-                `Closest point is not among the expected, got ${finalDestination.countryCode}`
-            )
+            assert.equal(finalDestination.countryCode,'NOR');
+        });
+
+        it('Should route to a West African Country when routing from Oman to Guatemala', function () {
+
+
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'OMN', 'GTM');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestinationAttr=graphController.graphInstance.getNodeAttributes(finalDestination.countryCode);
+            assert.equal('Western Africa',finalDestinationAttr.subregion,
+                `Routed to the closest in a non-western Africa country! 
+                Final destination region: ${finalDestinationAttr.subregion}, Final destination Country: ${finalDestination.countryCode}`
+            );
+
+        });
+
+        it('Should route to a West African Country when routing from Somalia to Uruguay', function () {
+
+
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'SOM', 'URY');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestinationAttr=graphController.graphInstance.getNodeAttributes(finalDestination.countryCode);
+            assert.equal('Western Africa',finalDestinationAttr.subregion,
+                `Routed to the closest in a non-western Africa country! 
+                Final destination region: ${finalDestinationAttr.subregion}, Final destination Country: ${finalDestination.countryCode}`
+            );
+
         });
     });
+
+    describe('Destination: Africa',function () {
+        it('Should route to Mozambique when routing from Sweden to Madagascar', function () {
+
+
+
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'SWE', 'MDG');
+            const routingResult = router.findRoute();
+
+            assert.ok(routingResult.isClosest,'Result is not closest !');
+            let finalDestination=routingResult.getFoundPath(true).pop();
+            assert.equal(finalDestination.countryCode,'MOZ');
+        });
+    })
+
+
 
 
 
