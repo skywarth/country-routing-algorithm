@@ -6,7 +6,7 @@ import {countriesDataset} from "../data/full.js";
 import GraphController from "../src/graph-controller.js";
 
 
-//simple commit to demonstrate
+//simple commit to demo
 
 
 let graphController=new GraphController(countriesDataset,new UndirectedGraph());
