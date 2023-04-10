@@ -317,3 +317,23 @@ describe('Should find the closest land route destination for oversea destination
 
 
 });
+
+
+describe('Estimated Total Distance',function () {
+
+    describe('Europe',function (){
+        it('Switzerland->Liechtenstein found path distance smaller than 250km', function () {
+            let designatedMaxDistanceKM=250;
+            const graphController = new GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CountryRouting.CountryRouting(graphController.graphInstance, 'CHE', 'LIE');
+            const routingResult = router.findRoute();
+
+
+            assert.ok(routingResult.pathDistance<designatedMaxDistanceKM,
+                `Distance is bigger than designated max distance, got ${routingResult.pathDistance} while expecting <=${designatedMaxDistanceKM}`
+                );
+        });
+    });
+
+});
