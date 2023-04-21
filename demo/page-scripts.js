@@ -1,15 +1,17 @@
 
 const {UndirectedGraph, DirectedGraph} = graphology;
 
-import * as CountryRouting from "../src/country-routing-algorithm.js"
 import {countriesDataset} from "../data/full.js";
+/*
+
+import {Router} from "../src/country-routing-algorithm.js"
 import GraphController from "../src/graph-controller.js";
+*/
+
+import CountryRoutingAlgorithm from "../src/index.js"
 
 
-//simple commit to demo
-
-
-let graphController=new GraphController(countriesDataset,new UndirectedGraph());
+let graphController=new CountryRoutingAlgorithm.GraphController(countriesDataset,new UndirectedGraph());
 
 await graphController.insertCountriesToGraph();
 
@@ -46,7 +48,7 @@ function getDestinationCountrySelectedValue(){
 }
 
 findRouteButton.addEventListener('click',function(e){
-    const router=new CountryRouting.CountryRouting(graphController.graphInstance,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
+    const router=new CountryRoutingAlgorithm.Router(graphController.graphInstance,getOriginCountrySelectedValue(),getDestinationCountrySelectedValue());
     router.debugMode=true;
     const routingResult=router.findRoute();
 

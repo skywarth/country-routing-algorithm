@@ -4,12 +4,13 @@ import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
 
 //maybe export RoutingResult too
-export {CountryRouting,Utils}
+//export {Router,Utils}
+
+export {Router}
 
 
 
-
-class CountryRouting{
+class Router {
 
     _maxMoveLimiter=150
 
