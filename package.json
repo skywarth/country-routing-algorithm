@@ -1,8 +1,8 @@
 {
   "name": "country-routing-algorithm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Graph based algorithm for traversing and finding the shortest path between two countries",
-  "main": "src/country-routing-algorithm.js",
+  "main": "src/index.js",
   "directories": {
     "test": "test"
   },
