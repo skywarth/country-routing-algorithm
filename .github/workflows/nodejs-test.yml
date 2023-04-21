@@ -31,5 +31,7 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
     - uses: JS-DevTools/npm-publish@v2
+      #to skip publishing for other versions, otherwise it overlaps and gives error
+      if: ${{ matrix.node-version == '18.x' }}
       with:
         token: ${{ secrets.NPM_PACKAGE_TOKEN_GRANULAR }}
