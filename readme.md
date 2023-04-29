@@ -2,6 +2,9 @@
 
 >AKA: *POOR MAN's ROUTING Algorithm*. Because you can't really afford APIs
 
+NPM package: https://www.npmjs.com/package/country-routing-algorithm
+
+
 Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
 ## TODO List
