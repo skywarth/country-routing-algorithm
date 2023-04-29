@@ -1,14 +1,8 @@
 
 const {UndirectedGraph, DirectedGraph} = graphology;
 
-import {countriesDataset} from "../data/full.js";
-/*
 
-import {Router} from "../src/country-routing-algorithm.js"
-import GraphController from "../src/graph-controller.js";
-*/
-
-import CountryRoutingAlgorithm from "../src/index.js"
+import CountryRoutingAlgorithm,{countriesDataset} from "../src/index.js"
 
 
 let graphController=new CountryRoutingAlgorithm.GraphController(countriesDataset,new UndirectedGraph());

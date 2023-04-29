@@ -1,11 +1,11 @@
 
-import {countriesDataset} from "../data/full.js";
+
 /*import {Router} from "../src/country-routing-algorithm.js"
 import GraphController from "../src/graph-controller.js";*/
 import Graph from 'graphology';
 
 
-import CRA from "../src/index.js"
+import CRA,{countriesDatasetRaw,countriesDataset} from "../src/index.js"
 
 import assert from 'assert';
 
