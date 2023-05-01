@@ -30,16 +30,14 @@ export default class RoutingResult{
         return this.#toCountryCode;
     }
 
-    getFoundPath(includingTheFromCountry=false) {
-        let path=[];
-        if(includingTheFromCountry){
-            path=[
-                {countryCode:this.#fromCountryCode,distanceToFinalDestination:this.pathDistance,distanceBetweenNode:0},
+    getFoundPath() {
+        //TODO: foundPath elements should be a class instance!
+        return this.#foundPath;
+    }
 
-            ]
-        }
-        path=[...path,...this.#foundPath];
-        return path;
+    prependToFoundPath(foundPathEntry){
+        //TODO: this is not used sufficiently, use it wherever you can
+        this.#foundPath=[foundPathEntry,...this.#foundPath];
     }
 
     get pathDistance() {

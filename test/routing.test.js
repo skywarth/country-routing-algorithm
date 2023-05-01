@@ -12,6 +12,19 @@ import assert from 'assert';
 
 describe('Standard land routing, no overseas', function () {
 
+    describe('Starts from the origin country', function () {
+        it('Should start routing from France when routing from France to Algeria', function () {
+
+            const graphController=new CRA.GraphController(countriesDataset,new Graph());
+            graphController.insertCountriesToGraph();
+            let router=new CRA.Router(graphController.graphInstance,'FRA','DZA');
+            const routingResult=router.findRoute();
+
+            assert.equal(routingResult.getFoundPath().shift().countryCode, 'FRA');
+        });
+
+    });
+
     describe('Reaches Destination',function (){
         describe('Should reach destination eventually',function (){
             it('Should eventually reach from Belgium to Qatar', function () {
@@ -21,7 +34,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'BEL','QAT');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'QAT');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'QAT');
             });
 
             it('Should eventually reach from Spain to Indonesia', function () {
@@ -31,7 +44,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'ESP','IND');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'IND');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'IND');
             });
 
             it('Should eventually reach from Cambodia to Ghana', function () {
@@ -41,7 +54,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'KHM','GHA');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'GHA');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'GHA');
             });
 
 
@@ -52,7 +65,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'USA','URY');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'URY');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'URY');
             });
 
             it('Should eventually reach from Mexico to French Guiana', function () {
@@ -62,7 +75,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'MEX','GUF');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'GUF');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'GUF');
             });
 
             it('Should eventually reach from Paraguay to Canada', function () {
@@ -72,7 +85,7 @@ describe('Standard land routing, no overseas', function () {
                 let router=new CRA.Router(graphController.graphInstance,'PRY','CAN');
                 const routingResult=router.findRoute();
 
-                assert.equal(routingResult.getFoundPath(true).pop().countryCode, 'CAN');
+                assert.equal(routingResult.getFoundPath().pop().countryCode, 'CAN');
             });
 
 
@@ -92,7 +105,7 @@ describe('Standard land routing, no overseas', function () {
 
 
 
-            assert.equal(routingResult.getFoundPath(true)[1].countryCode, 'CHE');
+            assert.equal(routingResult.getFoundPath()[1].countryCode, 'CHE');
         });
 
         it('Should go through Norway when routing from Finland to Germany', function () {
@@ -102,7 +115,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'FIN','DEU');
             const routingResult=router.findRoute();
 
-            assert.equal(routingResult.getFoundPath(true).some(x=>x.countryCode==='NOR'),true);
+            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode==='NOR'),true);
 
 
 
@@ -114,7 +127,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'ESP','LTU');
             const routingResult=router.findRoute();
 
-            assert.equal(routingResult.getFoundPath(true).some(x=>x.countryCode==='FRA'),true);
+            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode==='FRA'),true);
 
 
 
@@ -126,7 +139,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'DNK','HRV');
             const routingResult=router.findRoute();
 
-            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+            routingResult.getFoundPath().forEach((pathCountry)=>{
                 let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
                 assert.equal('Europe',attr.region,`Navigated through ${attr.name.common} even though it is not in Europe`);
             })
@@ -141,7 +154,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'MAR','EGY');
             const routingResult=router.findRoute();
 
-            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+            routingResult.getFoundPath().forEach((pathCountry)=>{
                 let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
                 assert.equal('Northern Africa',attr.subregion,`Navigated through ${attr.name.common} even though it is not in Northern Africa`);
             })
@@ -156,7 +169,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'KAZ','IND');
             const routingResult=router.findRoute();
 
-            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+            routingResult.getFoundPath().forEach((pathCountry)=>{
                 let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
                 assert.equal('Asia',attr.region,`Navigated through ${attr.name.common} even though it is not in Asia`);
             })
@@ -169,7 +182,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'OMN','THA');
             const routingResult=router.findRoute();
 
-            routingResult.getFoundPath(true).forEach((pathCountry)=>{
+            routingResult.getFoundPath().forEach((pathCountry)=>{
                 let attr=graphController.graphInstance.getNodeAttributes(pathCountry.countryCode);
                 assert.equal('Asia',attr.region,`Navigated through ${attr.name.common} even though it is not in Asia`);
             })
@@ -199,7 +212,9 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'FIN','DEU');
             const routingResult=router.findRoute();
 
-            let startingCountryReached=routingResult.getFoundPath(false).some(x=>x.countryCode==='FIN');
+            let foundPath=routingResult.getFoundPath();
+            foundPath.shift();
+            let startingCountryReached=foundPath.some(x=>x.countryCode==='FIN');
 
             assert.equal(startingCountryReached,false);
 
@@ -221,7 +236,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             assert.ok(
                 expectedClosestDestinations.includes(finalDestination.countryCode),
                 `Closest point is not among the expected, got ${finalDestination.countryCode}`
@@ -237,7 +252,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             assert.ok(
                 expectedClosestDestinations.includes(finalDestination.countryCode),
                 `Closest point is not among the expected, got ${finalDestination.countryCode}`
@@ -256,7 +271,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             assert.equal(finalDestination.countryCode,'NOR');
         });
 
@@ -270,7 +285,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             let finalDestinationAttr=graphController.graphInstance.getNodeAttributes(finalDestination.countryCode);
             assert.equal('Western Africa',finalDestinationAttr.subregion,
                 `Routed to the closest in a non-western Africa country! 
@@ -289,7 +304,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             let finalDestinationAttr=graphController.graphInstance.getNodeAttributes(finalDestination.countryCode);
             assert.equal('Western Africa',finalDestinationAttr.subregion,
                 `Routed to the closest in a non-western Africa country! 
@@ -310,7 +325,7 @@ describe('Should find the closest land route destination for oversea destination
             const routingResult = router.findRoute();
 
             assert.ok(routingResult.isClosest,'Result is not closest !');
-            let finalDestination=routingResult.getFoundPath(true).pop();
+            let finalDestination=routingResult.getFoundPath().pop();
             assert.equal(finalDestination.countryCode,'MOZ');
         });
     })

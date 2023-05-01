@@ -19,6 +19,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - Tests
   - [X] ~~Initial, basic tests~~
   - Advanced tests about total distance
+- [ ] Class and instance based solution for RoutingResult#foundPath entries
 
 
 

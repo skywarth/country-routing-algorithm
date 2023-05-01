@@ -128,6 +128,12 @@ class Router {
                 throw ex;
             }
         }
+
+        //adding the originCountry to foundPath
+        //a bit of a dirty method of doing it, i gotta admit
+        response.routingResult.prependToFoundPath({countryCode:this.originCountryCode,attributes:this.originCountry,distanceToFinalDestination:response.routingResult.pathDistance,distanceBetweenNode:0});
+
+
         //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
         return response.routingResult;
     }
