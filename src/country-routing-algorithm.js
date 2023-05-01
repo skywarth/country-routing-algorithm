@@ -156,7 +156,11 @@ class Router {
         }
 
 
-        let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
+        //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
+        let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
+            return {countryCode:neighborKey,attributes:neighborAttributes}
+        }).filter(x=>x.countryCode!==previous);
+
 
         let visitableNeighbors=nonPreviousNeighbors.filter(x =>
             (
