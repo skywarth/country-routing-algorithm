@@ -2,6 +2,7 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
+import TraversedCountry from "./traversed-country.js";
 
 //maybe export RoutingResult too
 //export {Router,Utils}
@@ -243,7 +244,13 @@ class Router {
             try{
                 let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
                 if(haventTraversed){
-                    routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                    //routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                    routingResult.traversedCountries.push(new TraversedCountry(
+                        visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
+                        visitableNeighborsByDistance[neighborToVisitCounter],
+                        visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination,
+                        visitableNeighborsByDistance[neighborToVisitCounter].distanceBetweenNode
+                    ));
                 }
 
 
@@ -272,7 +279,7 @@ class Router {
 
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
-                    //console.info('NoOtherBorderException caught');
+                    this.console.info('NoOtherBorderException caught');
                     neighborToVisitCounter++;
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
                         throw new NoOtherBorderException('backup, backup !!');
