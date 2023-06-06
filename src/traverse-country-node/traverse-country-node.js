@@ -1,7 +1,6 @@
 
 //This class or it's derivatives can be used for traversedCountries, visitableNeighbor, foundPath.
-//So a name change is in order
-export default class TraversedCountry{
+export default class TraverseCountryNode {
     #countryCode;
     #attributes;
     #distanceToFinalDestination;//TODO: this can be handled here. Consider.
@@ -34,6 +33,6 @@ export default class TraversedCountry{
 }
 
 
-class X extends TraversedCountry{
+class X extends TraverseCountryNode{
     //just an idea
 }

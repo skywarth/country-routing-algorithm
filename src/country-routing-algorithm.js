@@ -2,7 +2,7 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
-import TraversedCountry from "./traversed-country.js";
+import TraverseCountryNode from "./traverse-country-node/traverse-country-node.js";
 
 //maybe export RoutingResult too
 //export {Router,Utils}
@@ -245,7 +245,7 @@ class Router {
                 let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
                 if(haventTraversed){
                     //routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
-                    routingResult.traversedCountries.push(new TraversedCountry(
+                    routingResult.traversedCountries.push(new TraverseCountryNode(
                         visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
                         visitableNeighborsByDistance[neighborToVisitCounter],
                         visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination,
