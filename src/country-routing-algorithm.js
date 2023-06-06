@@ -132,10 +132,9 @@ class Router {
 
         //adding the originCountry to foundPath
         //a bit of a dirty method of doing it, i gotta admit
-        response.routingResult.prependToFoundPath({countryCode:this.originCountryCode,attributes:this.originCountry,distanceToFinalDestination:response.routingResult.pathDistance,distanceBetweenNode:0});
+        response.routingResult.prependToFoundPath(new TraverseCountryNode(this.originCountryCode,this.originCountry,response.routingResult.pathDistance,0));
 
 
-        //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
         return response.routingResult;
     }
 
@@ -268,7 +267,16 @@ class Router {
 
                 );
                 let recursionRoutingResult=new RoutingResult(
-                    [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    [new TraverseCountryNode //maybe use prependFoundPath here
+                                (   //TODO: we might directly use visitableNeighbor's element if we use traverseCountryNode in there too.
+                                    // Yeah I just checked traversedCountries and it is also fed through visitableNeighbor array. We really should cast this array to array of traverseCountryNode elements for sure
+                                    visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
+                                    visitableNeighborsByDistance[neighborToVisitCounter],
+                                    visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination,
+                                    visitableNeighborsByDistance[neighborToVisitCounter].distanceBetweenNode
+                                ),
+
+                        ...childResponse.routingResult.getFoundPath()],
                     routingResult.traversedCountries,
                     routingResult.fromCountryCode,
                     routingResult.toCountryCode
