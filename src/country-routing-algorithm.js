@@ -2,7 +2,7 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
-import TraverseCountryNode from "./traverse-country-node/traverse-country-node.js";
+import {TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
 
 //maybe export RoutingResult too
 //export {Router,Utils}

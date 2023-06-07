@@ -1,18 +1,14 @@
 
 //This class or it's derivatives can be used for traversedCountries, visitableNeighbor, foundPath.
-export default class TraverseCountryNode {
+export class CountryNode {
     #countryCode;
     #attributes;
-    #distanceToFinalDestination;//TODO: this can be handled here. Consider.
-
-    #distanceBetweenNode;
 
 
-    constructor(countryCode, attributes, distanceToFinalDestination, distanceBetweenNode) {
+
+    constructor(countryCode, attributes) {
         this.#countryCode = countryCode;
         this.#attributes = attributes;
-        this.#distanceToFinalDestination = distanceToFinalDestination;
-        this.#distanceBetweenNode = distanceBetweenNode;
     }
 
     get countryCode() {
@@ -23,6 +19,22 @@ export default class TraverseCountryNode {
         return this.#attributes;
     }
 
+
+}
+
+export class TraverseCountryNode extends CountryNode {
+
+    #distanceToFinalDestination;//TODO: this can be handled here. Consider.
+
+    #distanceBetweenNode;
+
+    constructor(countryCode, attributes, distanceToFinalDestination, distanceBetweenNode) {
+        super(countryCode,attributes);
+        this.#distanceToFinalDestination = distanceToFinalDestination;
+        this.#distanceBetweenNode = distanceBetweenNode;
+    }
+
+
     get distanceToFinalDestination() {
         return this.#distanceToFinalDestination;
     }
@@ -30,7 +42,11 @@ export default class TraverseCountryNode {
     get distanceBetweenNode() {
         return this.#distanceBetweenNode;
     }
+
+
 }
+
+
 
 
 class X extends TraverseCountryNode{
