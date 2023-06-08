@@ -19,6 +19,10 @@ export class CountryNode {
         return this.#attributes;
     }
 
+    isSameCountryNode(targetCountryNode){
+        return this.countryCode===targetCountryNode;
+    }
+
 
 }
 

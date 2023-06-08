@@ -2,7 +2,7 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
-import {TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
+import {CountryNode, TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
 
 //maybe export RoutingResult too
 //export {Router,Utils}
@@ -164,7 +164,8 @@ class Router {
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
         let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
-            return {countryCode:neighborKey,attributes:neighborAttributes}
+            //return {countryCode:neighborKey,attributes:neighborAttributes}
+            return new CountryNode(neighborKey,neighborAttributes);
         }).filter(x=>x.countryCode!==previous);
 
 
@@ -185,8 +186,10 @@ class Router {
             throw new NoOtherBorderException('backup, backup !!');
         }
 
+        debugger
 
         //calculate each neighbours distance to final destination (no pun intended)
+        //why is this iterating over graph? why not just use the visitableNeighbors?
         this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
@@ -222,6 +225,8 @@ class Router {
 
 
         });
+
+        debugger
 
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
