@@ -4,6 +4,7 @@ import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
 import {CountryNode, TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
 
+
 //maybe export RoutingResult too
 //export {Router,Utils}
 
@@ -186,32 +187,16 @@ class Router {
             throw new NoOtherBorderException('backup, backup !!');
         }
 
-        debugger
+        //debugger
 
         //calculate each neighbours distance to final destination (no pun intended)
         //why is this iterating over graph? why not just use the visitableNeighbors?
-        this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
+        /*this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
 
             let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
-            if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
+            if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){//I mean even this doesn't make damn sense, why not use the var on the upper line!?!
                 return;
             }
-            /*
-            //ok now I remember. This section is to prevent re-calculation of distance to final destination each time we pass through this said none
-            if(!neighborAttribute.distanceToFinalDestination){
-
-                let originalAttribute={...neighborAttribute};
-                let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
-                    outerThis.destinationCountry.latlng[0],
-                    outerThis.destinationCountry.latlng[1],
-                    neighborAttribute.latlng[0],
-                    neighborAttribute.latlng[1],
-                )
-                neighborAttribute.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
-            }
-
-            visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
-            */
             visitableNeighbor.distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
                 outerThis.destinationCountry.latlng[0],
                 outerThis.destinationCountry.latlng[1],
@@ -221,12 +206,35 @@ class Router {
             outerThis.graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
             })
+        });*/
+
+        this.console.log(visitableNeighbors);
+        //OK im making it iterate over visitableNeighbors because otherwise it looks autistic
+        visitableNeighbors=visitableNeighbors.map(function(countryNode){
+            //let distanceBetweenNode=outerThis.graph.getEdgeAttribute(routingResult.fromCountryCode,countryNode.countryCode,'distance');
+            //TODO: for whatever reason above is not working, error was:  NotFoundGraphError: Graph.getEdgeAttribute: could not find an edge for the given path ("IND" - "LKA"). Maybe we should also search the edge with target-source switched?
+            let distanceBetweenNode;
+            outerThis.graph.findEdge(routingResult.fromCountryCode,countryNode.countryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+                distanceBetweenNode=edgeAttributes.distance;
+            })
+            let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
+                outerThis.destinationCountry.latlng[0],
+                outerThis.destinationCountry.latlng[1],
+                countryNode.attributes.latlng[0],
+                countryNode.attributes.latlng[1],
+            );
+            return new TraverseCountryNode(
+                countryNode.countryCode,
+                countryNode.attributes,
+                distanceToFinalDestination,
+                distanceBetweenNode
+            );
+        })
 
 
 
-        });
 
-        debugger
+        //debugger
 
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
@@ -271,6 +279,7 @@ class Router {
                     routingResult.fromCountryCode,//for previous
 
                 );
+                //debugger
                 let recursionRoutingResult=new RoutingResult(
                     [new TraverseCountryNode //maybe use prependFoundPath here
                                 (   //TODO: we might directly use visitableNeighbor's element if we use traverseCountryNode in there too.
