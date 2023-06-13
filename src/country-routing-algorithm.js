@@ -188,36 +188,20 @@ class Router {
             throw new NoOtherBorderException('backup, backup !!');
         }
 
-        //debugger
 
-        //calculate each neighbours distance to final destination (no pun intended)
-        //why is this iterating over graph? why not just use the visitableNeighbors?
-        /*this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
-
-            let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
-            if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){//I mean even this doesn't make damn sense, why not use the var on the upper line!?!
-                return;
-            }
-            visitableNeighbor.distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
-                outerThis.destinationCountry.latlng[0],
-                outerThis.destinationCountry.latlng[1],
-                neighborAttribute.latlng[0],
-                neighborAttribute.latlng[1],
-            );
-            outerThis.graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
-                visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
-            })
-        });*/
-
-        this.console.log(visitableNeighbors);
-        //OK im making it iterate over visitableNeighbors because otherwise it looks autistic
         visitableNeighbors=visitableNeighbors.map(function(countryNode){
-            //let distanceBetweenNode=outerThis.graph.getEdgeAttribute(routingResult.fromCountryCode,countryNode.countryCode,'distance');
-            //TODO: for whatever reason above is not working, error was:  NotFoundGraphError: Graph.getEdgeAttribute: could not find an edge for the given path ("IND" - "LKA"). Maybe we should also search the edge with target-source switched?
             let distanceBetweenNode;
+            /*try{
+                distanceBetweenNode=outerThis.graph.getEdgeAttribute(routingResult.fromCountryCode,countryNode.countryCode,'distance');
+                //TODO: for whatever reason above is not working, error was:  NotFoundGraphError: Graph.getEdgeAttribute: could not find an edge for the given path ("IND" - "LKA"). Maybe we should also search the edge with target-source switched?
+                //Yep that was it, below catch helps it work but i think it is dirty.
+            }catch (ex){
+                distanceBetweenNode=outerThis.graph.getEdgeAttribute(countryNode.countryCode,routingResult.fromCountryCode,'distance');
+            }*/
             outerThis.graph.findEdge(routingResult.fromCountryCode,countryNode.countryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
                 distanceBetweenNode=edgeAttributes.distance;
             })
+
             let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
                 outerThis.destinationCountry.latlng[0],
                 outerThis.destinationCountry.latlng[1],
@@ -232,10 +216,6 @@ class Router {
             );
         })
 
-
-
-
-        //debugger
 
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
@@ -258,12 +238,7 @@ class Router {
                 let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
                 if(haventTraversed){
                     //routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
-                    routingResult.traversedCountries.push(new TraverseCountryNode(
-                        visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
-                        visitableNeighborsByDistance[neighborToVisitCounter],
-                        visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination,
-                        visitableNeighborsByDistance[neighborToVisitCounter].distanceBetweenNode
-                    ));
+                    routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
                 }
 
 
@@ -280,18 +255,8 @@ class Router {
                     routingResult.fromCountryCode,//for previous
 
                 );
-                //debugger
                 let recursionRoutingResult=new RoutingResult(
-                    [new TraverseCountryNode //maybe use prependFoundPath here
-                                (   //TODO: we might directly use visitableNeighbor's element if we use traverseCountryNode in there too.
-                                    // Yeah I just checked traversedCountries and it is also fed through visitableNeighbor array. We really should cast this array to array of traverseCountryNode elements for sure
-                                    visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
-                                    visitableNeighborsByDistance[neighborToVisitCounter],
-                                    visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination,
-                                    visitableNeighborsByDistance[neighborToVisitCounter].distanceBetweenNode
-                                ),
-
-                        ...childResponse.routingResult.getFoundPath()],
+                    [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
                     routingResult.traversedCountries,
                     routingResult.fromCountryCode,
                     routingResult.toCountryCode
