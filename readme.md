@@ -11,7 +11,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - [ ] Edge Cases:
   - [ ] Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors
   - Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually.
-
+- [ ] Issues #8 and #9
 - [X] ~~calculate the total distance to be traversed:~~
   - [X] ~~Yeah we return the path/route but the distance ? It's the whole point of this~~
 - [X] ~~Handle max moves exceeded~~
@@ -23,10 +23,10 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - Tests
   - [X] ~~Initial, basic tests~~
   - Advanced tests about total distance
-- [ ] Class and instance based solution for RoutingResult#foundPath entries
-- [ ] Class and instance based solution for RoutingResult#traversedCountries
+- [X] ~~Class and instance based solution for RoutingResult#foundPath entries~~
+- [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
-
+- [ ] Abstraction for GraphController (to-be-renamed), in order to achieve independence of graph library.
 
 
 ## Resources:

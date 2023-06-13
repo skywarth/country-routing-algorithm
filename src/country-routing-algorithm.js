@@ -79,6 +79,7 @@ class Router {
     }
 
     constructor(graph,originCountryCode,destinationCountryCode,debugMode=false) {
+        //TODO: this class should take GraphController (also rename it) instance. This way we can generalize it, in order to make graphs library independent.
         this._graph=graph;
         this._originCountryCode=originCountryCode;
         this._destinationCountryCode=destinationCountryCode;
