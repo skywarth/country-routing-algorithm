@@ -20,7 +20,12 @@ export class CountryNode {
     }
 
     isSameCountryNode(targetCountryNode){
-        return this.countryCode===targetCountryNode;
+        //currently we'll compare country nodes based merely on country code. We might alter this behaviour in the future as needed.
+        return this.isSameCountryCode(targetCountryNode.countryCode);
+    }
+
+    isSameCountryCode(targetCountryCode){
+        return this.countryCode===targetCountryCode;
     }
 
 

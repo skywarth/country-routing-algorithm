@@ -166,17 +166,16 @@ class Router {
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
         let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
-            //return {countryCode:neighborKey,attributes:neighborAttributes}
             return new CountryNode(neighborKey,neighborAttributes);
-        }).filter(x=>x.countryCode!==previous);
+        }).filter(x=>!x.isSameCountryCode(previous));
 
 
         let visitableNeighbors=nonPreviousNeighbors.filter(x =>
             (
-                !routingResult.traversedCountries.find(y=>y.countryCode===x.countryCode) && //filtering out already traversed countries
+                !routingResult.traversedCountries.find(y=>y.isSameCountryNode(x)) && //filtering out already traversed countries
 
                 //This one was discovered during tests. When routing from Finland to Germany, it was first going through Norway, Sweden, Finland, Russia. It doesn't make sense to revisit the origin country.
-                x.countryCode!==this.originCountryCode //filtering out origin country
+                !x.isSameCountryCode(this.originCountryCode) //filtering out origin country
             )
 
         );
@@ -225,17 +224,17 @@ class Router {
 
         this.console.log(visitableNeighborsByDistance);
 
-        if(visitableNeighborsByDistance.some(x=>x.countryCode===routingResult.toCountryCode)){//wait does it even make sense ? I think it is utter BS
+        if(visitableNeighborsByDistance.some(x=>x.isSameCountryCode(routingResult.toCountryCode))){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
 
-            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.countryCode===routingResult.toCountryCode);
+            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.isSameCountryCode(routingResult.toCountryCode));
         }
 
 
         let noOtherBorderException;
         do{
             try{
-                let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
+                let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.isSameCountryNode(visitableNeighborsByDistance[neighborToVisitCounter]))===-1;
                 if(haventTraversed){
                     //routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
                     routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
