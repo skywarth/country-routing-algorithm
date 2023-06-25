@@ -2,6 +2,8 @@ import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
+import {CountryNode, TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
+
 
 //maybe export RoutingResult too
 //export {Router,Utils}
@@ -77,6 +79,7 @@ class Router {
     }
 
     constructor(graph,originCountryCode,destinationCountryCode,debugMode=false) {
+        //TODO: this class should take GraphController (also rename it) instance. This way we can generalize it, in order to make graphs library independent.
         this._graph=graph;
         this._originCountryCode=originCountryCode;
         this._destinationCountryCode=destinationCountryCode;
@@ -131,10 +134,9 @@ class Router {
 
         //adding the originCountry to foundPath
         //a bit of a dirty method of doing it, i gotta admit
-        response.routingResult.prependToFoundPath({countryCode:this.originCountryCode,attributes:this.originCountry,distanceToFinalDestination:response.routingResult.pathDistance,distanceBetweenNode:0});
+        response.routingResult.prependToFoundPath(new TraverseCountryNode(this.originCountryCode,this.originCountry,response.routingResult.pathDistance,0));
 
 
-        //response.totalDistance=response.foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
         return response.routingResult;
     }
 
@@ -164,16 +166,16 @@ class Router {
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
         let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
-            return {countryCode:neighborKey,attributes:neighborAttributes}
-        }).filter(x=>x.countryCode!==previous);
+            return new CountryNode(neighborKey,neighborAttributes);
+        }).filter(x=>!x.isSameCountryCode(previous));
 
 
         let visitableNeighbors=nonPreviousNeighbors.filter(x =>
             (
-                !routingResult.traversedCountries.find(y=>y.countryCode===x.countryCode) && //filtering out already traversed countries
+                !routingResult.traversedCountries.find(y=>y.isSameCountryNode(x)) && //filtering out already traversed countries
 
                 //This one was discovered during tests. When routing from Finland to Germany, it was first going through Norway, Sweden, Finland, Russia. It doesn't make sense to revisit the origin country.
-                x.countryCode!==this.originCountryCode //filtering out origin country
+                !x.isSameCountryCode(this.originCountryCode) //filtering out origin country
             )
 
         );
@@ -186,42 +188,33 @@ class Router {
         }
 
 
-        //calculate each neighbours distance to final destination (no pun intended)
-        this.graph.forEachNeighbor(routingResult.fromCountryCode,function(neighborCountryCode,neighborAttribute){
-
-            let visitableNeighbor=visitableNeighbors.find(x=>x.countryCode===neighborCountryCode);
-            if(!visitableNeighbors.some(x=>x.countryCode===neighborCountryCode)){
-                return;
-            }
-            /*
-            //ok now I remember. This section is to prevent re-calculation of distance to final destination each time we pass through this said none
-            if(!neighborAttribute.distanceToFinalDestination){
-
-                let originalAttribute={...neighborAttribute};
-                let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
-                    outerThis.destinationCountry.latlng[0],
-                    outerThis.destinationCountry.latlng[1],
-                    neighborAttribute.latlng[0],
-                    neighborAttribute.latlng[1],
-                )
-                neighborAttribute.distanceToFinalDestination=distanceToFinalDestination;//I don't really trust this method to append it but well it worked.
-            }
-
-            visitableNeighbor.distanceToFinalDestination=neighborAttribute.distanceToFinalDestination;
-            */
-            visitableNeighbor.distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
-                outerThis.destinationCountry.latlng[0],
-                outerThis.destinationCountry.latlng[1],
-                neighborAttribute.latlng[0],
-                neighborAttribute.latlng[1],
-            );
-            outerThis.graph.findEdge(routingResult.fromCountryCode,neighborCountryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
-                visitableNeighbor.distanceBetweenNode=edgeAttributes.distance;
+        visitableNeighbors=visitableNeighbors.map(function(countryNode){
+            let distanceBetweenNode;
+            /*try{
+                distanceBetweenNode=outerThis.graph.getEdgeAttribute(routingResult.fromCountryCode,countryNode.countryCode,'distance');
+                //TODO: for whatever reason above is not working, error was:  NotFoundGraphError: Graph.getEdgeAttribute: could not find an edge for the given path ("IND" - "LKA"). Maybe we should also search the edge with target-source switched?
+                //Yep that was it, below catch helps it work but i think it is dirty.
+            }catch (ex){
+                distanceBetweenNode=outerThis.graph.getEdgeAttribute(countryNode.countryCode,routingResult.fromCountryCode,'distance');
+            }*/
+            outerThis.graph.findEdge(routingResult.fromCountryCode,countryNode.countryCode,function(edgeKey,edgeAttributes,sourceCountryCode,targetCountryCode){//source-target doesn't matter (on param 1 and 2), because it is undirected
+                distanceBetweenNode=edgeAttributes.distance;
             })
 
+            let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
+                outerThis.destinationCountry.latlng[0],
+                outerThis.destinationCountry.latlng[1],
+                countryNode.attributes.latlng[0],
+                countryNode.attributes.latlng[1],
+            );
+            return new TraverseCountryNode(
+                countryNode.countryCode,
+                countryNode.attributes,
+                distanceToFinalDestination,
+                distanceBetweenNode
+            );
+        })
 
-
-        });
 
 
         let visitableNeighborsByDistance=[...visitableNeighbors].sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
@@ -231,19 +224,19 @@ class Router {
 
         this.console.log(visitableNeighborsByDistance);
 
-        if(visitableNeighborsByDistance.some(x=>x.countryCode===routingResult.toCountryCode)){//wait does it even make sense ? I think it is utter BS
+        if(visitableNeighborsByDistance.some(x=>x.isSameCountryCode(routingResult.toCountryCode))){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !
 
-            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.countryCode===routingResult.toCountryCode);
+            neighborToVisitCounter=visitableNeighborsByDistance.findIndex(x=>x.isSameCountryCode(routingResult.toCountryCode));
         }
 
 
         let noOtherBorderException;
         do{
             try{
-                let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.countryCode===visitableNeighborsByDistance[neighborToVisitCounter].countryCode)===-1;
+                let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.isSameCountryNode(visitableNeighborsByDistance[neighborToVisitCounter]))===-1;
                 if(haventTraversed){
-                    routingResult.traversedCountries.push({countryCode: visitableNeighborsByDistance[neighborToVisitCounter].countryCode,distanceToFinalDestination:visitableNeighborsByDistance[neighborToVisitCounter].distanceToFinalDestination});
+                    routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
                 }
 
 
@@ -272,7 +265,7 @@ class Router {
 
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
-                    //console.info('NoOtherBorderException caught');
+                    this.console.info('NoOtherBorderException caught');
                     neighborToVisitCounter++;
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
                         throw new NoOtherBorderException('backup, backup !!');
