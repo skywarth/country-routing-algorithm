@@ -36,4 +36,36 @@ class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
     }
 }
 
-export {NoOtherBorderException, MaxAllowedMovesAchieved}
+
+class RedundantPathDetected extends AbstractCountryRoutingException {
+    constructor(message,lastRoutingResult,previous,countryNode) {
+        super(message);
+        this.name = 'RedundantPathDetected';
+        this.#lastRoutingResult=lastRoutingResult;
+        this.#previous=previous;
+        this.lastRoutingResult=countryNode;
+    }
+
+
+    //TODO move these props to an extend class, it is duplicate !
+    #lastRoutingResult;
+    #previous;
+
+
+    #redundancyBeginningNode;//maybe goldenNeighbor;
+
+    get lastRoutingResult(){
+        return this.#lastRoutingResult;
+    }
+
+    get previous(){
+        return this.#previous;
+    }
+
+
+    get redundancyBeginningNode() {
+        return this.#redundancyBeginningNode;
+    }
+}
+
+export {NoOtherBorderException, MaxAllowedMovesAchieved,RedundantPathDetected}

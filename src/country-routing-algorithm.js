@@ -1,4 +1,4 @@
-import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
+import {NoOtherBorderException, MaxAllowedMovesAchieved, RedundantPathDetected} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
@@ -163,6 +163,18 @@ class Router {
             throw new MaxAllowedMovesAchieved('max moves achieved !!',routingResult,previous);
         }
 
+        //Check against redundancy to prune
+        let previousNodes=routingResult.getFoundPath().filter(function(x){
+            return !x.isSameCountryCode(routingResult.fromCountryCode) && !x.isSameCountryCode(previous)
+        });
+        previousNodes=previousNodes.filter(function (y){
+            //return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode);
+            return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode,()=>{return true});
+        });
+        if(previousNodes.length>0){
+            throw new RedundantPathDetected('ayyyy',routingResult,previous,previousNodes[0]);
+        }
+
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
         let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
@@ -239,13 +251,15 @@ class Router {
                     routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
                 }
 
+                let foundPathForChild=[...routingResult.getFoundPath(),visitableNeighborsByDistance[neighborToVisitCounter]];
+
 
 
 
 
                 let childResponse=this.iterate(
                     new RoutingResult(
-                        [],
+                        foundPathForChild,
                         routingResult.traversedCountries,
                         visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
                         routingResult.toCountryCode
@@ -275,6 +289,12 @@ class Router {
 
                 }else if(ex instanceof MaxAllowedMovesAchieved){
                     throw ex;
+                }else if(ex instanceof RedundantPathDetected){
+                    if(ex.redundancyBeginningNode.isSameCountryCode(routingResult.fromCountryCode)){
+                        //something
+                    }else{
+                        throw ex;
+                    }
                 }
                 else{
                     throw ex;
