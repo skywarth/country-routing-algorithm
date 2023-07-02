@@ -243,7 +243,7 @@ class Router {
         }
 
 
-        let noOtherBorderException;
+        let keepIteratingOverNeighbors;
         do{
             try{
                 let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.isSameCountryNode(visitableNeighborsByDistance[neighborToVisitCounter]))===-1;
@@ -268,7 +268,8 @@ class Router {
 
                 );
                 let recursionRoutingResult=new RoutingResult(
-                    [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    //[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    [...childResponse.routingResult.getFoundPath()],
                     routingResult.traversedCountries,
                     routingResult.fromCountryCode,
                     routingResult.toCountryCode
@@ -280,18 +281,23 @@ class Router {
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
                     this.console.info('NoOtherBorderException caught');
-                    neighborToVisitCounter++;
+                    //neighborToVisitCounter++;
+                    visitableNeighborsByDistance.splice(neighborToVisitCounter,1);
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
                         throw new NoOtherBorderException('backup, backup !!');
                     }
-                    noOtherBorderException=true;
+                    keepIteratingOverNeighbors=true;
 
 
                 }else if(ex instanceof MaxAllowedMovesAchieved){
                     throw ex;
                 }else if(ex instanceof RedundantPathDetected){
                     if(ex.redundancyBeginningNode.isSameCountryCode(routingResult.fromCountryCode)){
-                        //something
+                        this.console.info('RedundantPathDetected caught');
+                        //neighborToVisitCounter++; //this messes with the NoOtherBorderException, we cannot use this approach.
+                        //maybe we should apply the same logic below for the NoOtherBorderException too. Removing that specific country from visitableNeighbors sounds better.
+                        visitableNeighborsByDistance.splice(neighborToVisitCounter,1);//what is the guarantee of neighborToVisitCounter still being valid ?
+                        keepIteratingOverNeighbors=true;
                     }else{
                         throw ex;
                     }
@@ -300,7 +306,7 @@ class Router {
                     throw ex;
                 }
             }
-        }while(noOtherBorderException);
+        }while(keepIteratingOverNeighbors);
 
 
 

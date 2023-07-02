@@ -43,7 +43,7 @@ class RedundantPathDetected extends AbstractCountryRoutingException {
         this.name = 'RedundantPathDetected';
         this.#lastRoutingResult=lastRoutingResult;
         this.#previous=previous;
-        this.lastRoutingResult=countryNode;
+        this.#redundancyBeginningNode=countryNode;
     }
 
 
