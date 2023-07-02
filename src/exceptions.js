@@ -10,9 +10,23 @@ class AbstractCountryRoutingException extends Error {
 
 
 class NoOtherBorderException extends AbstractCountryRoutingException {
-    constructor(message) {
+    //TODO: OOP here, please for the love of god.
+    constructor(message,lastRoutingResult,previous) {
         super(message);
-        this.name = 'NoOtherBorderException';
+        this.name = 'MaxAllowedMovesAchieved';
+        this.#lastRoutingResult=lastRoutingResult;
+        this.#previous=previous;
+    }
+
+    #lastRoutingResult;
+    #previous;
+
+    get lastRoutingResult(){
+        return this.#lastRoutingResult;
+    }
+
+    get previous(){
+        return this.#previous;
     }
 }
 

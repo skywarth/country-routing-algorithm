@@ -13,11 +13,11 @@ import assert from 'assert';
 describe('Standard land routing, no overseas', function () {
 
     describe('Starts from the origin country', function () {
-        it('Should start routing from France when routing from France to Algeria', function () {
+        it('Should start routing from France when routing from France to Chad', function () {
 
             const graphController=new CRA.GraphController(countriesDataset,new Graph());
             graphController.insertCountriesToGraph();
-            let router=new CRA.Router(graphController.graphInstance,'FRA','DZA');
+            let router=new CRA.Router(graphController.graphInstance,'FRA','TCD');
             const routingResult=router.findRoute();
 
             assert.equal(routingResult.getFoundPath().shift().countryCode, 'FRA');

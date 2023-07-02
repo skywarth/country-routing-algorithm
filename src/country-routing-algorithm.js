@@ -14,7 +14,7 @@ export {Router}
 
 class Router {
 
-    _maxMoveLimiter=150
+    _maxMoveLimiter=250//250 doesn't work, it would be slightly hacky to reduce it in order to make it work. I do not want solution, i want problems, always.
 
 
     _graph;
@@ -115,7 +115,7 @@ class Router {
             );
 
         }catch (ex){
-            if(ex instanceof MaxAllowedMovesAchieved){
+            if(ex instanceof MaxAllowedMovesAchieved || ex instanceof NoOtherBorderException){
                 this.console.log({ex:ex});
                 let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 this.console.log({closestIs:sorted[0]});
@@ -159,7 +159,7 @@ class Router {
 
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
-        if(this._moves>250){
+        if(this._moves>this._maxMoveLimiter){
             throw new MaxAllowedMovesAchieved('max moves achieved !!',routingResult,previous);
         }
 
@@ -167,6 +167,7 @@ class Router {
         let previousNodes=routingResult.getFoundPath().filter(function(x){
             return !x.isSameCountryCode(routingResult.fromCountryCode) && !x.isSameCountryCode(previous)
         });
+        //TODO: since originCountry is not in the foundPath, it can't assert it against redundancy.
         previousNodes=previousNodes.filter(function (y){
             //return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode);
             return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode,()=>{return true});
@@ -197,7 +198,7 @@ class Router {
 
 
         if(visitableNeighbors.length===0 && routingResult.fromCountryCode!==routingResult.toCountryCode){
-            throw new NoOtherBorderException('backup, backup !!');
+            throw new NoOtherBorderException('backup, backup !!',routingResult,previous);
         }
 
 
@@ -288,7 +289,10 @@ class Router {
                     visitableNeighborsByDistance.splice(neighborToVisitCounter,1);
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
                         this.console.warn('INNN');
-                        throw new NoOtherBorderException('backup, backup !!');
+                        if(routingResult.fromCountryCode===this.originCountryCode){
+                            this.console.log('whaddup peeps!');
+                        }
+                        throw ex;
                     }
                     this.console.warn('OUTTT');
                     keepIteratingOverNeighbors=true;
