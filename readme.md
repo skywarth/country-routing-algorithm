@@ -22,7 +22,9 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
   - world map
 - Tests
   - [X] ~~Initial, basic tests~~
-  - Advanced tests about total distance
+  - [ ] Advanced tests about total distance
+  - [ ] Standard pruning
+  - [X] Pruning involving origin country
 - [X] ~~Class and instance based solution for RoutingResult#foundPath entries~~
 - [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)

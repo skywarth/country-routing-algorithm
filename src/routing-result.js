@@ -40,6 +40,10 @@ export default class RoutingResult{
         this.#foundPath=[foundPathEntry,...this.#foundPath];
     }
 
+    appendToFoundPath(foundPathEntry){
+        this.#foundPath.push(foundPathEntry);
+    }
+
     get pathDistance() {
         return this.#foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
     }

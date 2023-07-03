@@ -134,7 +134,8 @@ class Router {
 
         //adding the originCountry to foundPath
         //a bit of a dirty method of doing it, i gotta admit
-        response.routingResult.prependToFoundPath(new TraverseCountryNode(this.originCountryCode,this.originCountry,response.routingResult.pathDistance,0));
+        //response.routingResult.prependToFoundPath(new TraverseCountryNode(this.originCountryCode,this.originCountry,response.routingResult.pathDistance,0));
+        //no longer needed
 
 
         return response.routingResult;
@@ -150,11 +151,38 @@ class Router {
 
         this.console.log({previous:previous,currentCountryCode:routingResult.fromCountryCode});
 
+
+
+
+        let currentCountryNode=new CountryNode(routingResult.fromCountryCode,this.graph.getNodeAttributes(routingResult.fromCountryCode));
+        currentCountryNode=new TraverseCountryNode(//TODO: this should be inside routingResult. We should get rid of countryCode stuff and start using CountryNode
+            routingResult.fromCountryCode,
+            currentCountryNode.attributes,
+            Utils.distanceInKmBetweenEarthCoordinates(
+                currentCountryNode.attributes.latlng[0],
+                currentCountryNode.attributes.latlng[1],
+                this.destinationCountry.latlng[0],
+                this.destinationCountry.latlng[1],
+            ),
+            (routingResult.getFoundPath()?.slice(-1)[0]?.distanceBetween(currentCountryNode))??0
+
+
+            );
+
+
+        let foundPathForChild=[
+            ...routingResult.getFoundPath(),
+            currentCountryNode,
+        ];
+
+
+
+
         if(routingResult.fromCountryCode===routingResult.toCountryCode){
             this.console.log('SOLD !!!');
+            routingResult.appendToFoundPath(currentCountryNode);//I don't like this. Do it properly you lazybones.
             return response;
         }
-
 
 
         let outerThis=this;//please forgive me father for I have sinned
@@ -253,7 +281,7 @@ class Router {
                     routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
                 }
 
-                let foundPathForChild=[...routingResult.getFoundPath(),visitableNeighborsByDistance[neighborToVisitCounter]];
+                //let foundPathForChild=[...routingResult.getFoundPath(),visitableNeighborsByDistance[neighborToVisitCounter]];
 
 
 

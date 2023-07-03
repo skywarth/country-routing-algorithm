@@ -1,5 +1,7 @@
 
 //This class or it's derivatives can be used for traversedCountries, visitableNeighbor, foundPath.
+import Utils from "../utils.js";
+
 export class CountryNode {
     #countryCode;
     #attributes;
@@ -26,6 +28,16 @@ export class CountryNode {
 
     isSameCountryCode(targetCountryCode){
         return this.countryCode===targetCountryCode;
+    }
+
+
+    distanceBetween(countryNode){//TODO: bug, why can't i rename this to distanceBetweenNode ??
+        return Utils.distanceInKmBetweenEarthCoordinates(
+            this.attributes.latlng[0],
+            this.attributes.latlng[1],
+            countryNode.attributes.latlng[0],
+            countryNode.attributes.latlng[1],
+        );
     }
 
 
