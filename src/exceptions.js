@@ -1,25 +1,25 @@
 
 
-class AbstractCountryRoutingException extends Error {
+class AbstractCountryRoutingAlgorithmException extends Error {
     constructor(message) {
         super(message);
-        this.exceptionType='CountryRoutingException';
-        this.name = 'AbstractCountryRoutingException - DO NOT USE IT';
+        //this.exceptionType='CountryRoutingException';
+        this.name = 'AbstractCountryRoutingAlgorithmException - DO NOT USE IT';
     }
 }
 
 
-class NoOtherBorderException extends AbstractCountryRoutingException {
-    //TODO: OOP here, please for the love of god.
-    constructor(message,lastRoutingResult,previous) {
-        super(message);
-        this.name = 'MaxAllowedMovesAchieved';
-        this.#lastRoutingResult=lastRoutingResult;
-        this.#previous=previous;
-    }
+class AbstractRoutingException extends AbstractCountryRoutingAlgorithmException{
 
     #lastRoutingResult;
     #previous;
+
+    constructor(message,lastRoutingResult,previous) {
+        super(message);
+        this.#lastRoutingResult=lastRoutingResult;
+        this.#previous=previous;
+        this.name = 'AbstractRoutingException - DO NOT USE IT';
+    }
 
     get lastRoutingResult(){
         return this.#lastRoutingResult;
@@ -28,54 +28,38 @@ class NoOtherBorderException extends AbstractCountryRoutingException {
     get previous(){
         return this.#previous;
     }
+
 }
 
-class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
+
+class NoOtherBorderException extends AbstractRoutingException {
+
     constructor(message,lastRoutingResult,previous) {
-        super(message);
+        super(message,lastRoutingResult,previous);
         this.name = 'MaxAllowedMovesAchieved';
-        this.#lastRoutingResult=lastRoutingResult;
-        this.#previous=previous;
     }
 
-    #lastRoutingResult;
-    #previous;
 
-    get lastRoutingResult(){
-        return this.#lastRoutingResult;
+}
+
+class MaxAllowedMovesAchieved extends AbstractRoutingException {
+    constructor(message,lastRoutingResult,previous) {
+        super(message,lastRoutingResult,previous);
+        this.name = 'MaxAllowedMovesAchieved';
     }
 
-    get previous(){
-        return this.#previous;
-    }
 }
 
 
-class RedundantPathDetected extends AbstractCountryRoutingException {
+class RedundantPathDetected extends AbstractRoutingException {
     constructor(message,lastRoutingResult,previous,countryNode) {
-        super(message);
+        super(message,lastRoutingResult,previous);
         this.name = 'RedundantPathDetected';
-        this.#lastRoutingResult=lastRoutingResult;
-        this.#previous=previous;
         this.#redundancyBeginningNode=countryNode;
     }
 
 
-    //TODO move these props to an extend class, it is duplicate !
-    #lastRoutingResult;
-    #previous;
-
-
     #redundancyBeginningNode;//maybe goldenNeighbor;
-
-    get lastRoutingResult(){
-        return this.#lastRoutingResult;
-    }
-
-    get previous(){
-        return this.#previous;
-    }
-
 
     get redundancyBeginningNode() {
         return this.#redundancyBeginningNode;
