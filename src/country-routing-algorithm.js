@@ -165,7 +165,7 @@ class Router {
 
         //Check against redundancy to prune
         //TODO: since originCountry is not in the foundPath, it can't assert it against redundancy.
-        let previousNodes=routingResult.getFoundPath().filter(function(x){
+        let previousNeighbors=routingResult.getFoundPath().filter(function(x){
             return (
                 !x.isSameCountryCode(routingResult.fromCountryCode) &&
                 !x.isSameCountryCode(previous) &&
@@ -173,9 +173,9 @@ class Router {
             )
         });
 
-        if(previousNodes.length>0){
-            this.console.log(`Throwing RedundantPathDetected. Currently at ${routingResult.fromCountryCode}, redundant until ${previousNodes[0].countryCode}`)
-            throw new RedundantPathDetected('ayyyy',routingResult,previous,previousNodes[0]);
+        if(previousNeighbors.length>0){
+            this.console.log(`Throwing RedundantPathDetected. Currently at ${routingResult.fromCountryCode}, redundant until ${previousNeighbors[0].countryCode}`)
+            throw new RedundantPathDetected('ayyyy',routingResult,previous,previousNeighbors[0]);
         }
 
 
