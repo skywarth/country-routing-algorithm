@@ -1,31 +1,25 @@
 
 
-class AbstractCountryRoutingException extends Error {
+class AbstractCountryRoutingAlgorithmException extends Error {
     constructor(message) {
         super(message);
-        this.exceptionType='CountryRoutingException';
-        this.name = 'AbstractCountryRoutingException - DO NOT USE IT';
+        //this.exceptionType='CountryRoutingException';
+        this.name = 'AbstractCountryRoutingAlgorithmException - DO NOT USE IT';
     }
 }
 
 
-class NoOtherBorderException extends AbstractCountryRoutingException {
-    constructor(message) {
-        super(message);
-        this.name = 'NoOtherBorderException';
-    }
-}
-
-class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
-    constructor(message,lastRoutingResult,previous) {
-        super(message);
-        this.name = 'MaxAllowedMovesAchieved';
-        this.#lastRoutingResult=lastRoutingResult;
-        this.#previous=previous;
-    }
+class AbstractRoutingException extends AbstractCountryRoutingAlgorithmException{
 
     #lastRoutingResult;
     #previous;
+
+    constructor(message,lastRoutingResult,previous) {
+        super(message);
+        this.#lastRoutingResult=lastRoutingResult;
+        this.#previous=previous;
+        this.name = 'AbstractRoutingException - DO NOT USE IT';
+    }
 
     get lastRoutingResult(){
         return this.#lastRoutingResult;
@@ -34,6 +28,42 @@ class MaxAllowedMovesAchieved extends AbstractCountryRoutingException {
     get previous(){
         return this.#previous;
     }
+
 }
 
-export {NoOtherBorderException, MaxAllowedMovesAchieved}
+
+class NoOtherBorderException extends AbstractRoutingException {
+
+    constructor(message,lastRoutingResult,previous) {
+        super(message,lastRoutingResult,previous);
+        this.name = 'MaxAllowedMovesAchieved';
+    }
+
+
+}
+
+class MaxAllowedMovesAchieved extends AbstractRoutingException {
+    constructor(message,lastRoutingResult,previous) {
+        super(message,lastRoutingResult,previous);
+        this.name = 'MaxAllowedMovesAchieved';
+    }
+
+}
+
+
+class RedundantPathDetected extends AbstractRoutingException {
+    constructor(message,lastRoutingResult,previous,countryNode) {
+        super(message,lastRoutingResult,previous);
+        this.name = 'RedundantPathDetected';
+        this.#redundancyBeginningNode=countryNode;
+    }
+
+
+    #redundancyBeginningNode;//maybe goldenNeighbor;
+
+    get redundancyBeginningNode() {
+        return this.#redundancyBeginningNode;
+    }
+}
+
+export {NoOtherBorderException, MaxAllowedMovesAchieved,RedundantPathDetected}

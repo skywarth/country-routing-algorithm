@@ -1,4 +1,4 @@
-import {NoOtherBorderException,MaxAllowedMovesAchieved} from "./exceptions.js"
+import {NoOtherBorderException, MaxAllowedMovesAchieved, RedundantPathDetected} from "./exceptions.js"
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
@@ -14,7 +14,7 @@ export {Router}
 
 class Router {
 
-    _maxMoveLimiter=150
+    _maxMoveLimiter=250//250 doesn't work, it would be slightly hacky to reduce it in order to make it work. I do not want solution, i want problems, always.
 
 
     _graph;
@@ -115,7 +115,7 @@ class Router {
             );
 
         }catch (ex){
-            if(ex instanceof MaxAllowedMovesAchieved){
+            if(ex instanceof MaxAllowedMovesAchieved || ex instanceof NoOtherBorderException){
                 this.console.log({ex:ex});
                 let sorted=ex.lastRoutingResult.traversedCountries.sort((a, b) => a.distanceToFinalDestination - b.distanceToFinalDestination);
                 this.console.log({closestIs:sorted[0]});
@@ -159,8 +159,23 @@ class Router {
 
         let outerThis=this;//please forgive me father for I have sinned
         this._moves++;
-        if(this._moves>250){
+        if(this._moves>this._maxMoveLimiter){
             throw new MaxAllowedMovesAchieved('max moves achieved !!',routingResult,previous);
+        }
+
+        //Check against redundancy to prune
+        //TODO: since originCountry is not in the foundPath, it can't assert it against redundancy.
+        let previousNeighbors=routingResult.getFoundPath().filter(function(x){
+            return (
+                !x.isSameCountryCode(routingResult.fromCountryCode) &&
+                !x.isSameCountryCode(previous) &&
+                outerThis.graph.someEdge(x.countryCode,routingResult.fromCountryCode,()=>{return true})
+            )
+        });
+
+        if(previousNeighbors.length>0){
+            this.console.log(`Throwing RedundantPathDetected. Currently at ${routingResult.fromCountryCode}, redundant until ${previousNeighbors[0].countryCode}`)
+            throw new RedundantPathDetected('ayyyy',routingResult,previous,previousNeighbors[0]);
         }
 
 
@@ -184,7 +199,7 @@ class Router {
 
 
         if(visitableNeighbors.length===0 && routingResult.fromCountryCode!==routingResult.toCountryCode){
-            throw new NoOtherBorderException('backup, backup !!');
+            throw new NoOtherBorderException('backup, backup !!',routingResult,previous);
         }
 
 
@@ -231,7 +246,7 @@ class Router {
         }
 
 
-        let noOtherBorderException;
+        let keepIteratingOverNeighbors;
         do{
             try{
                 let haventTraversed=routingResult.traversedCountries.findIndex(x=>x.isSameCountryNode(visitableNeighborsByDistance[neighborToVisitCounter]))===-1;
@@ -239,13 +254,16 @@ class Router {
                     routingResult.traversedCountries.push(visitableNeighborsByDistance[neighborToVisitCounter]);
                 }
 
+                let foundPathForChild=[...routingResult.getFoundPath(),visitableNeighborsByDistance[neighborToVisitCounter]];
+
 
 
 
 
                 let childResponse=this.iterate(
                     new RoutingResult(
-                        [],
+                        foundPathForChild,
+                        //routingResult.traversedCountries,
                         routingResult.traversedCountries,
                         visitableNeighborsByDistance[neighborToVisitCounter].countryCode,
                         routingResult.toCountryCode
@@ -254,7 +272,8 @@ class Router {
 
                 );
                 let recursionRoutingResult=new RoutingResult(
-                    [visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    //[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
+                    [...childResponse.routingResult.getFoundPath()],
                     routingResult.traversedCountries,
                     routingResult.fromCountryCode,
                     routingResult.toCountryCode
@@ -266,21 +285,47 @@ class Router {
             }catch (ex){
                 if(ex instanceof NoOtherBorderException){
                     this.console.info('NoOtherBorderException caught');
-                    neighborToVisitCounter++;
+                    //neighborToVisitCounter++;
+                    visitableNeighborsByDistance.splice(neighborToVisitCounter,1);
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
-                        throw new NoOtherBorderException('backup, backup !!');
+                        throw ex;
                     }
-                    noOtherBorderException=true;
+                    keepIteratingOverNeighbors=true;
 
 
                 }else if(ex instanceof MaxAllowedMovesAchieved){
                     throw ex;
+                }else if(ex instanceof RedundantPathDetected){
+                    //let indexToRemove=routingResult.traversedCountries.findIndex(x=>x.isSameCountryCode(routingResult.fromCountryCode))
+                    //debugger
+                    //routingResult.traversedCountries.splice(indexToRemove,1);
+                    if(ex.redundancyBeginningNode.isSameCountryCode(routingResult.fromCountryCode)){
+                        //no we shouldn't simply remove that neighbor, we should reduce its priority. Think it like scoring.
+                        this.console.info('RedundantPathDetected caught');
+                        //neighborToVisitCounter++; //this messes with the NoOtherBorderException, we cannot use this approach.
+                        //maybe we should apply the same logic below for the NoOtherBorderException too. Removing that specific country from visitableNeighbors sounds better.
+                        //visitableNeighborsByDistance.splice(neighborToVisitCounter,1);//what is the guarantee of neighborToVisitCounter still being valid ?
+                        //neighborToVisitCounter++;
+
+                        //visitableNeighborsByDistance.push(visitableNeighborsByDistance.splice(neighborToVisitCounter, 1)[0]);
+
+
+                        //ok how about we set the next neighbor visit explicitly by neighborToVisitCountry?
+
+                        let neighborIndex=visitableNeighborsByDistance.findIndex(x=>x.isSameCountryCode(ex.lastRoutingResult.fromCountryCode))
+                        neighborToVisitCounter=neighborIndex;
+
+                        keepIteratingOverNeighbors=true;
+                    }else{
+                        throw ex;
+
+                    }
                 }
                 else{
                     throw ex;
                 }
             }
-        }while(noOtherBorderException);
+        }while(keepIteratingOverNeighbors);
 
 
 
