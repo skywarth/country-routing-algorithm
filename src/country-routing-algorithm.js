@@ -164,14 +164,15 @@ class Router {
         }
 
         //Check against redundancy to prune
-        let previousNodes=routingResult.getFoundPath().filter(function(x){
-            return !x.isSameCountryCode(routingResult.fromCountryCode) && !x.isSameCountryCode(previous)
-        });
         //TODO: since originCountry is not in the foundPath, it can't assert it against redundancy.
-        previousNodes=previousNodes.filter(function (y){
-            //return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode);
-            return outerThis.graph.someEdge(y.countryCode,routingResult.fromCountryCode,()=>{return true});
+        let previousNodes=routingResult.getFoundPath().filter(function(x){
+            return (
+                !x.isSameCountryCode(routingResult.fromCountryCode) &&
+                !x.isSameCountryCode(previous) &&
+                outerThis.graph.someEdge(x.countryCode,routingResult.fromCountryCode,()=>{return true})
+            )
         });
+
         if(previousNodes.length>0){
             this.console.log(`Throwing RedundantPathDetected. Currently at ${routingResult.fromCountryCode}, redundant until ${previousNodes[0].countryCode}`)
             throw new RedundantPathDetected('ayyyy',routingResult,previous,previousNodes[0]);
@@ -273,7 +274,6 @@ class Router {
                 let recursionRoutingResult=new RoutingResult(
                     //[visitableNeighborsByDistance[neighborToVisitCounter],...childResponse.routingResult.getFoundPath()],
                     [...childResponse.routingResult.getFoundPath()],
-                    //routingResult.traversedCountries,
                     routingResult.traversedCountries,
                     routingResult.fromCountryCode,
                     routingResult.toCountryCode
@@ -288,13 +288,8 @@ class Router {
                     //neighborToVisitCounter++;
                     visitableNeighborsByDistance.splice(neighborToVisitCounter,1);
                     if(visitableNeighborsByDistance[neighborToVisitCounter]===undefined){
-                        this.console.warn('INNN');
-                        if(routingResult.fromCountryCode===this.originCountryCode){
-                            this.console.log('whaddup peeps!');
-                        }
                         throw ex;
                     }
-                    this.console.warn('OUTTT');
                     keepIteratingOverNeighbors=true;
 
 
