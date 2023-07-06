@@ -108,14 +108,17 @@ describe('Standard land routing, no overseas', function () {
             assert.equal(routingResult.getFoundPath()[1].countryCode, 'CHE');
         });
 
-        it('Should go through Norway when routing from Finland to Germany', function () {
+        it("Shouldn't go through Norway when routing from Finland to Germany", function () {
+            //P.S: It was SHOULD, but I changed it to shouldn't since we now introduced pruning.
+            //...It wouldn't make sense go through Finland->Norway->Russia while you could just Finland->Russia
+
             //bruh dataset doesn't acknowledge Sweden having border with Denmark :(
             const graphController=new CRA.GraphController(countriesDataset,new Graph());
             graphController.insertCountriesToGraph();
             let router=new CRA.Router(graphController.graphInstance,'FIN','DEU');
             const routingResult=router.findRoute();
 
-            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode==='NOR'),true);
+            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode==='NOR'),false);
 
 
 
