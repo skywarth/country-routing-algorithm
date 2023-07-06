@@ -358,3 +358,26 @@ describe('Estimated Total Distance',function () {
     });
 
 });
+
+
+describe('Should prune down redundant traversal path',function () {
+
+    const isRedundancyPresent=(foundPath,graphInstance)=>{
+        //TODO: prepare a function to use in every prune test case.
+        return false;
+    };
+
+    describe('Non-origin country redundancies',function (){
+        it('Should prune balkan region and Austria when routing from Italy to Tunisia', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'ITA', 'TUN');
+            const routingResult = router.findRoute();
+
+            const countriesExpectedToBePruned=['GRC','SVN','MNE','ALB','HRV','AUT','CHE']
+
+            let pruneExpectationMet=!routingResult.getFoundPath().some(x=>countriesExpectedToBePruned.includes(x.countryCode));
+            assert.ok(pruneExpectationMet, `Prune expectations are not met.`);
+        });
+    })
+});
