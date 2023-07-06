@@ -180,7 +180,7 @@ class Router {
 
         if(routingResult.fromCountryCode===routingResult.toCountryCode){
             this.console.log('SOLD !!!');
-            routingResult.appendToFoundPath(currentCountryNode);//I don't like this. Do it properly you lazybones.
+            routingResult.appendToFoundPath(currentCountryNode);//TODO: I don't like this. Do it properly you lazybones.
             return response;
         }
 

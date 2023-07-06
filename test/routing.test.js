@@ -118,7 +118,7 @@ describe('Standard land routing, no overseas', function () {
             let router=new CRA.Router(graphController.graphInstance,'FIN','DEU');
             const routingResult=router.findRoute();
 
-            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode!=='NOR'),true);
+            assert.equal(routingResult.getFoundPath().some(x=>x.countryCode==='NOR'),false);
 
 
 
