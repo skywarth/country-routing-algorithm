@@ -59,4 +59,22 @@ export default class RoutingResult{
         this.#fromCountryCode = fromCountryCode;
         this.#toCountryCode = toCountryCode;
     }
+
+
+    isRedundancyPresent(graphInstance){
+        //TODO: I don't like the fact this takes graphInstance param. We need to address it.
+
+        let isAnySameInstanceFound = this.getFoundPath().some((instance1, index1) => {
+            return this.getFoundPath().some((instance2, index2) => {
+                if ((index2 <= index1) || Math.abs(index1-index2)===1) return false;
+
+                return (
+                    //graphInstance.someEdge(instance1.countryCode,instance2.countryCode,()=>{return true})
+                    graphInstance.someEdge(instance1.countryCode,instance2.countryCode,()=>{return true})
+                )
+            });
+        });
+
+        return isAnySameInstanceFound;
+    };
 }

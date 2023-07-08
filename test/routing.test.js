@@ -362,11 +362,6 @@ describe('Estimated Total Distance',function () {
 
 describe('Should prune down redundant traversal path',function () {
 
-    const isRedundancyPresent=(foundPath,graphInstance)=>{
-        //TODO: prepare a function to use in every prune test case.
-        return false;
-    };
-
     describe('Non-origin country redundancies',function (){
         it('Should prune balkan region and Austria when routing from Italy to Tunisia', function () {
             const graphController = new CRA.GraphController(countriesDataset, new Graph());
@@ -379,5 +374,84 @@ describe('Should prune down redundant traversal path',function () {
             let pruneExpectationMet=!routingResult.getFoundPath().some(x=>countriesExpectedToBePruned.includes(x.countryCode));
             assert.ok(pruneExpectationMet, `Prune expectations are not met.`);
         });
-    })
+
+        it('Should prune several times when routing from Denmark to South Africa', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'DNK', 'ZAF');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+        });
+
+        it('Should prune at least once when routing from Morocco to Georgia', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'MAR', 'GEO');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+        });
+    });
+
+
+    describe('Origin country redundancies',function (){
+        it('Should prune per origin country when routing from Italy to Tunisia', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'ITA', 'TUN');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+        });
+
+        it('Should prune Balkan region when routing from Greece to Chad', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'GRC', 'TCD');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            const countriesExpectedToBePruned=['SVN','MNE','ALB','HRV','SRB','UNK','BGR']
+
+            let pruneExpectationMet=!routingResult.getFoundPath().some(x=>countriesExpectedToBePruned.includes(x.countryCode));
+            assert.ok(pruneExpectationMet, `Balkan region is not pruned, still goes through Balkans.`);
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+        });
+
+    });
+
+    describe('Oversea destinations (isClosest=true)',function (){
+        it('Should prune several times when routing from Sweden to Argentina', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'SWE', 'ARG');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+            assert.ok(routingResult.isClosest, `RoutingResult is not marked isClosest`);
+        });
+
+        it('Should prune several times when routing from France to Australia', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'FRA', 'AUS');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+            assert.ok(routingResult.isClosest, `RoutingResult is not marked isClosest`);
+        });
+    });
 });

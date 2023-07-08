@@ -192,7 +192,7 @@ class Router {
         }
 
         //Check against redundancy to prune
-        //TODO: since originCountry is not in the foundPath, it can't assert it against redundancy.
+        //TODO: wait why don't we just use routingResult.isRedundancyPresent. That would be great and parallel with unit tests. ?
         let previousNeighbors=routingResult.getFoundPath().filter(function(x){
             return (
                 !x.isSameCountryCode(routingResult.fromCountryCode) &&
@@ -265,7 +265,7 @@ class Router {
 
         let neighborToVisitCounter=0;
 
-        this.console.log(visitableNeighborsByDistance);
+        this.console.log({visitableNeighborsByDistance:[...visitableNeighborsByDistance]});
 
         if(visitableNeighborsByDistance.some(x=>x.isSameCountryCode(routingResult.toCountryCode))){//wait does it even make sense ? I think it is utter BS
             //means final destination country is in our reach, it is our dear neighbor !

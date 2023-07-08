@@ -11,7 +11,8 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - [ ] Edge Cases:
   - [ ] Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors. **[Pruning]**
   - [ ] Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually. **[Pruning]**
-- [ ] Issues #8 and #9
+- [ ] Prevented/pruned redundancies count on `routingResult`
+- [X] ~~Issues #8 and #9~~
 - [X] ~~calculate the total distance to be traversed:~~
   - [X] ~~Yeah we return the path/route but the distance ? It's the whole point of this~~
 - [X] ~~Handle max moves exceeded~~
@@ -19,12 +20,12 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
   - Btw there is possibly something wrong with the traversed countries array. When i was experimenting with something else, i noticed both duplicate and different distance values. **Not sure if this issue still persists.**
 - [ ] visualize
   - the graph
-  - world map
+  - [X] ~~[world map](https://skywarth.github.io/country-routing-algorithm-demo-vue/)~~
 - Tests
   - [X] ~~Initial, basic tests~~
   - [ ] Advanced tests about total distance
-  - [ ] Standard pruning
-  - [ ] Pruning involving origin country (Like Finland->Germany test case)
+  - [X] ~~Standard pruning~~
+  - [X] ~~Pruning involving origin country (Like Finland->Germany test case)~~
 - [X] ~~Class and instance based solution for RoutingResult#foundPath entries~~
 - [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
