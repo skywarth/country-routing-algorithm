@@ -8,9 +8,6 @@ NPM package: https://www.npmjs.com/package/country-routing-algorithm
 Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
 ## TODO List
-- [ ] Edge Cases:
-  - [ ] Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors. **[Pruning]**
-  - [ ] Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually. **[Pruning]**
 - [ ] Prevented/pruned redundancies count on `routingResult`
 - [X] ~~Issues #8 and #9~~
 - [X] ~~calculate the total distance to be traversed:~~
@@ -28,6 +25,8 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
   - [X] ~~Pruning involving origin country (Like Finland->Germany test case)~~
 - [X] ~~Class and instance based solution for RoutingResult#foundPath entries~~
 - [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
+- [X] ~~Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors.~~ **[Pruning]**
+- [X] ~~Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually. **[Pruning]**~~
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
 - [ ] Abstraction for GraphController (to-be-renamed), in order to achieve independence of graph library.
 
