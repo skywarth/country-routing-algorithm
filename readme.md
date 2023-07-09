@@ -23,6 +23,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
   - [ ] Advanced tests about total distance
   - [X] ~~Standard pruning~~
   - [X] ~~Pruning involving origin country (Like Finland->Germany test case)~~
+  - [ ] FoundPath order (reversed) and countries should be identical when origin and destination countries switch (Issue #11). Prepare unit tests for this.
 - [X] ~~Class and instance based solution for RoutingResult#foundPath entries~~
 - [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
 - [X] ~~Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors.~~ **[Pruning]**
