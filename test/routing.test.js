@@ -453,5 +453,17 @@ describe('Should prune down redundant traversal path',function () {
             assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
             assert.ok(routingResult.isClosest, `RoutingResult is not marked isClosest`);
         });
+
+        it('Should prune several times when routing from Afghanistan to Antarctica', function () {
+            const graphController = new CRA.GraphController(countriesDataset, new Graph());
+            graphController.insertCountriesToGraph();
+            let router = new CRA.Router(graphController.graphInstance, 'AFG', 'ATA');
+            const routingResult = router.findRoute();
+
+            assert.equal(routingResult.isRedundancyPresent(graphController.graphInstance),false,'Redundancy detected among foundPath.')
+
+            assert.ok((routingResult.getFoundPath().length<=routingResult.traversedCountries.length), `TraversedCountries are bigger than foundPath, which is odd. `);
+            assert.ok(routingResult.isClosest, `RoutingResult is not marked isClosest`);
+        });
     });
 });
