@@ -30,7 +30,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - [X] ~~Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually. **[Pruning]**~~
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
 - [ ] Abstraction for GraphController (to-be-renamed), in order to achieve independence of graph library.
-
+- [ ] Deviance rate calculation through google maps api
 
 ## Resources:
 
