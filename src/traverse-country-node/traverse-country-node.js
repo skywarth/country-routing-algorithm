@@ -3,22 +3,22 @@
 import Utils from "../utils.js";
 
 export class CountryNode {
-    #countryCode;
-    #attributes;
+    _countryCode;
+    _attributes;
 
 
 
     constructor(countryCode, attributes) {
-        this.#countryCode = countryCode;
-        this.#attributes = attributes;
+        this._countryCode = countryCode;
+        this._attributes = attributes;
     }
 
     get countryCode() {
-        return this.#countryCode;
+        return this._countryCode;
     }
 
     get attributes() {
-        return this.#attributes;
+        return this._attributes;
     }
 
     isSameCountryNode(targetCountryNode){
@@ -45,23 +45,23 @@ export class CountryNode {
 
 export class TraverseCountryNode extends CountryNode {
 
-    #distanceToFinalDestination;//TODO: this can be handled here. Consider.
+    _distanceToFinalDestination;//TODO: this can be handled here. Consider.
 
-    #distanceBetweenNode;
+    _distanceBetweenNode;
 
     constructor(countryCode, attributes, distanceToFinalDestination, distanceBetweenNode) {
         super(countryCode,attributes);
-        this.#distanceToFinalDestination = distanceToFinalDestination;
-        this.#distanceBetweenNode = distanceBetweenNode;
+        this._distanceToFinalDestination = distanceToFinalDestination;
+        this._distanceBetweenNode = distanceBetweenNode;
     }
 
 
     get distanceToFinalDestination() {
-        return this.#distanceToFinalDestination;
+        return this._distanceToFinalDestination;
     }
 
     get distanceBetweenNode() {
-        return this.#distanceBetweenNode;
+        return this._distanceBetweenNode;
     }
 
 

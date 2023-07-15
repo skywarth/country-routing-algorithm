@@ -2,62 +2,62 @@
 //export {RoutingResult as default};
 
 export default class RoutingResult{
-    #foundPath=[];
-    #traversedCountries=[];
-    #isClosest=false;
+    _foundPath=[];
+    _traversedCountries=[];
+    _isClosest=false;
 
-    #fromCountryCode='';
-    #toCountryCode='';
+    _fromCountryCode='';
+    _toCountryCode='';
 
 
     get isClosest() {
-        return this.#isClosest;
+        return this._isClosest;
     }
 
     set isClosest(value) {
-        this.#isClosest = value;
+        this._isClosest = value;
     }
 
     get traversedCountries() {
-        return this.#traversedCountries;
+        return this._traversedCountries;
     }
 
     get fromCountryCode() {
-        return this.#fromCountryCode;
+        return this._fromCountryCode;
     }
 
     get toCountryCode() {
-        return this.#toCountryCode;
+        return this._toCountryCode;
     }
 
     getFoundPath() {
         //TODO: foundPath elements should be a class instance!
-        return this.#foundPath;
+        return this._foundPath;
     }
 
     prependToFoundPath(foundPathEntry){
         //TODO: this is not used sufficiently, use it wherever you can
-        this.#foundPath=[foundPathEntry,...this.#foundPath];
+        this._foundPath=[foundPathEntry,...this._foundPath];
     }
 
     appendToFoundPath(foundPathEntry){
-        this.#foundPath.push(foundPathEntry);
+        this._foundPath.push(foundPathEntry);
     }
 
     get pathDistance() {
-        return this.#foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
+        return this._foundPath.reduce((n, {distanceBetweenNode}) => n + distanceBetweenNode, 0);
     }
 
     get pathCountryCount() {
-        return this.#foundPath.length;
+        return this._foundPath.length;
     }
 
 
     constructor(foundPath, traversedCountries, fromCountryCode, toCountryCode) {
-        this.#foundPath = foundPath;
-        this.#traversedCountries = traversedCountries;
-        this.#fromCountryCode = fromCountryCode;
-        this.#toCountryCode = toCountryCode;
+        this._foundPath = foundPath;
+        this._traversedCountries = traversedCountries;
+        this._fromCountryCode = fromCountryCode;
+        this._toCountryCode = toCountryCode;
     }
 
 
