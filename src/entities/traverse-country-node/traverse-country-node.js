@@ -1,10 +1,16 @@
 
 //This class or it's derivatives can be used for traversedCountries, visitableNeighbor, foundPath.
-import Utils from "../utils.js";
+import Utils from "../../utils.js";
 
 export class CountryNode {
     _countryCode;
     _attributes;
+
+    //Country attributes
+    _commonName;
+    _officialName;
+    _flagUnicode;
+
 
 
 

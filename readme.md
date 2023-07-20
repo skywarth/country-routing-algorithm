@@ -8,14 +8,14 @@ NPM package: https://www.npmjs.com/package/country-routing-algorithm
 Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
 ## TODO List
-- [ ] Prevented/pruned redundancies count on `routingResult`
+
 - [X] ~~Issues #8 and #9~~
 - [X] ~~calculate the total distance to be traversed:~~
   - [X] ~~Yeah we return the path/route but the distance ? It's the whole point of this~~
 - [X] ~~Handle max moves exceeded~~
   - [X] ~~It should pick among traversed countries which is the closest to the final destination. Then return a routing to that closest country~~
   - Btw there is possibly something wrong with the traversed countries array. When i was experimenting with something else, i noticed both duplicate and different distance values. **Not sure if this issue still persists.**
-- [ ] visualize
+- [X] ~~visualize~~
   - the graph
   - [X] ~~[world map](https://skywarth.github.io/country-routing-algorithm-demo-vue/)~~
 - Tests
@@ -32,6 +32,7 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - [ ] Attribute expansion for CountryNode, abstraction for attributes
   - [ ] Coordinate attribute and accessor for CountryNode
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
+- [ ] Prevented/pruned redundancies count on `routingResult`
 - [ ] Abstraction for GraphController (to-be-renamed), in order to achieve independence of graph library.
 - [ ] Deviance rate calculation through google maps api
 
