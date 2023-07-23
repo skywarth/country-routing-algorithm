@@ -1,6 +1,6 @@
 import Utils from "../utils.js";
 
-class Coordinate{
+export default class Coordinate{
     _latitude;
     _longitude;
 
