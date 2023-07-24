@@ -273,7 +273,7 @@ class Router {
             );
             return new TraverseCountryNode(
                 countryNode.countryCode,
-                new Coordinate(countryNode.centerCoordinate.latitude,countryNode.centerCoordinate.longitude),
+                countryNode.centerCoordinate,
                 countryNode.attributes.name.common,
                 countryNode.attributes.name.official,
                 countryNode.attributes.region,

@@ -76,12 +76,7 @@ export class CountryNode {
 
 
     distanceBetween(countryNode){//TODO: bug, why can't i rename this to distanceBetweenNode ??
-        return Utils.distanceInKmBetweenEarthCoordinates(
-            this.attributes.latlng[0],
-            this.attributes.latlng[1],
-            countryNode.attributes.latlng[0],
-            countryNode.attributes.latlng[1],
-        );
+        return this.centerCoordinate.sphericalDistanceKM(countryNode.centerCoordinate);
     }
 
 
