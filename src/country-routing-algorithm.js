@@ -2,7 +2,8 @@ import {NoOtherBorderException, MaxAllowedMovesAchieved, RedundantPathDetected} 
 import Utils from "./utils.js"
 import RoutingResult from "./routing-result.js"
 import {NullifierProxyHandler} from "./nullifier-proxy.js"
-import {CountryNode, TraverseCountryNode} from "./traverse-country-node/traverse-country-node.js";
+import {CountryNode, TraverseCountryNode} from "./entities/traverse-country-node/traverse-country-node.js";
+import Coordinate from "./entities/Coordinate.js";
 
 
 //maybe export RoutingResult too
@@ -132,11 +133,6 @@ class Router {
             }
         }
 
-        //adding the originCountry to foundPath
-        //a bit of a dirty method of doing it, i gotta admit
-        //response.routingResult.prependToFoundPath(new TraverseCountryNode(this.originCountryCode,this.originCountry,response.routingResult.pathDistance,0));
-        //no longer needed
-
 
         return response.routingResult;
     }
@@ -154,13 +150,29 @@ class Router {
 
 
 
-        let currentCountryNode=new CountryNode(routingResult.fromCountryCode,this.graph.getNodeAttributes(routingResult.fromCountryCode));
-        currentCountryNode=new TraverseCountryNode(//TODO: this should be inside routingResult. We should get rid of countryCode stuff and start using CountryNode
+        const currentCountryAttr=this.graph.getNodeAttributes(routingResult.fromCountryCode);
+        let currentCountryNode=new CountryNode(
             routingResult.fromCountryCode,
+            new Coordinate(currentCountryAttr.latlng[0],currentCountryAttr.latlng[1]),
+            currentCountryAttr.name.common,
+            currentCountryAttr.name.official,
+            currentCountryAttr.region,
+            currentCountryAttr.subRegion,
+            currentCountryAttr.flag,
+            currentCountryAttr,
+        );
+        currentCountryNode=new TraverseCountryNode(//TODO: this should be inside routingResult. We should get rid of countryCode stuff and start using CountryNode
+            currentCountryNode.countryCode,
+            currentCountryNode.centerCoordinate,
+            currentCountryNode.commonName,
+            currentCountryNode.officialName,
+            currentCountryNode.region,
+            currentCountryNode.subRegion,
+            currentCountryNode.flagUnicode,
             currentCountryNode.attributes,
             Utils.distanceInKmBetweenEarthCoordinates(
-                currentCountryNode.attributes.latlng[0],
-                currentCountryNode.attributes.latlng[1],
+                currentCountryNode.centerCoordinate.latitude,
+                currentCountryNode.centerCoordinate.longitude,
                 this.destinationCountry.latlng[0],
                 this.destinationCountry.latlng[1],
             ),
@@ -209,7 +221,16 @@ class Router {
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
         let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
-            return new CountryNode(neighborKey,neighborAttributes);
+            return new CountryNode(
+                neighborKey,
+                new Coordinate(neighborAttributes.latlng[0],neighborAttributes.latlng[1]),
+                neighborAttributes.name.common,
+                neighborAttributes.name.official,
+                neighborAttributes.region,
+                neighborAttributes.subRegion,
+                neighborAttributes.flag,
+                neighborAttributes,
+            );
         }).filter(x=>!x.isSameCountryCode(previous));
 
 
@@ -247,11 +268,17 @@ class Router {
             let distanceToFinalDestination=Utils.distanceInKmBetweenEarthCoordinates(
                 outerThis.destinationCountry.latlng[0],
                 outerThis.destinationCountry.latlng[1],
-                countryNode.attributes.latlng[0],
-                countryNode.attributes.latlng[1],
+                countryNode.centerCoordinate.latitude,
+                countryNode.centerCoordinate.longitude,
             );
             return new TraverseCountryNode(
                 countryNode.countryCode,
+                countryNode.centerCoordinate,
+                countryNode.attributes.name.common,
+                countryNode.attributes.name.official,
+                countryNode.attributes.region,
+                countryNode.attributes.subRegion,
+                countryNode.attributes.flag,
                 countryNode.attributes,
                 distanceToFinalDestination,
                 distanceBetweenNode

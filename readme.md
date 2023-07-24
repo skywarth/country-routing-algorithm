@@ -8,15 +8,15 @@ NPM package: https://www.npmjs.com/package/country-routing-algorithm
 Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
 ## TODO List
-- [ ] Prevented/pruned redundancies count on `routingResult`
+
 - [X] ~~Issues #8 and #9~~
 - [X] ~~calculate the total distance to be traversed:~~
   - [X] ~~Yeah we return the path/route but the distance ? It's the whole point of this~~
 - [X] ~~Handle max moves exceeded~~
   - [X] ~~It should pick among traversed countries which is the closest to the final destination. Then return a routing to that closest country~~
   - Btw there is possibly something wrong with the traversed countries array. When i was experimenting with something else, i noticed both duplicate and different distance values. **Not sure if this issue still persists.**
-- [ ] visualize
-  - the graph
+- [ ] ~~visualize~~
+  - [ ] the graph
   - [X] ~~[world map](https://skywarth.github.io/country-routing-algorithm-demo-vue/)~~
 - Tests
   - [X] ~~Initial, basic tests~~
@@ -28,10 +28,12 @@ Not much of a README right now, just fiddle with `page-scripts.js` and see the r
 - [X] ~~Class and instance based solution for RoutingResult#traversedCountries~~
 - [X] ~~Afghanistan to Antarctica edge case. Algorithm should prune down the path if it cycles back to one of the origin country's neighbors.~~ **[Pruning]**
 - [X] ~~Afghanistan->Åland Islands. It should prune down the visit to China since it cycles back to Russia eventually. **[Pruning]**~~
-- [ ] Coordinate Class
-- [ ] Attribute expansion for CountryNode, abstraction for attributes
-  - [ ] Coordinate attribute and accessor for CountryNode
+- [ ] [!] Storing CountryNode on graph nodes. This simplifies things a lot.
+- [X] Coordinate Class
+- [X] Attribute expansion for CountryNode, abstraction for attributes
+  - [X] Coordinate attribute and accessor for CountryNode
 - [ ] Rollback count for RoutingResult (I guess I was talking about the NoOtherBorderException ?)
+- [ ] Prevented/pruned redundancies count on `routingResult`
 - [ ] Abstraction for GraphController (to-be-renamed), in order to achieve independence of graph library.
 - [ ] Deviance rate calculation through google maps api
 
