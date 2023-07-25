@@ -14,11 +14,12 @@ await graphController.insertCountriesToGraph();
 
 
 function fillInCountriesToSelect(selectDOM){
-    graphController.graphInstance.forEachNode(function (node,attr){
+    graphController.graphInstance.forEachNode(function (countryCode,country){
+
         let domNode=document.createElement('option');
-        let text=`${attr.name.common} (${attr.cca3}) ${attr.flag}`;
+        let text=`${country.countryNode.commonName} (${country.countryNode.countryCode}) ${country.countryNode.flagUnicode}`;
         domNode.innerText=text;
-        domNode.value=attr.cca3;
+        domNode.value=country.countryNode.countryCode;
         selectDOM.appendChild(domNode)
 
     })

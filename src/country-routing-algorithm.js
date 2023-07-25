@@ -53,7 +53,7 @@ class Router {
 
     get destinationCountry() {
         if(!this._destinationCountry){
-            this._destinationCountry=this.graph.getNodeAttributes(this.destinationCountryCode);
+            this._destinationCountry=this.graph.getNodeAttributes(this.destinationCountryCode).countryNode;
         }
 
         return this._destinationCountry;
@@ -150,17 +150,7 @@ class Router {
 
 
 
-        const currentCountryAttr=this.graph.getNodeAttributes(routingResult.fromCountryCode);
-        let currentCountryNode=new CountryNode(
-            routingResult.fromCountryCode,
-            new Coordinate(currentCountryAttr.latlng[0],currentCountryAttr.latlng[1]),
-            currentCountryAttr.name.common,
-            currentCountryAttr.name.official,
-            currentCountryAttr.region,
-            currentCountryAttr.subRegion,
-            currentCountryAttr.flag,
-            currentCountryAttr,
-        );
+        let currentCountryNode=this.graph.getNodeAttributes(routingResult.fromCountryCode).countryNode;
         currentCountryNode=new TraverseCountryNode(//TODO: this should be inside routingResult. We should get rid of countryCode stuff and start using CountryNode
             currentCountryNode.countryCode,
             currentCountryNode.centerCoordinate,
@@ -170,12 +160,8 @@ class Router {
             currentCountryNode.subRegion,
             currentCountryNode.flagUnicode,
             currentCountryNode.attributes,
-            Utils.distanceInKmBetweenEarthCoordinates(
-                currentCountryNode.centerCoordinate.latitude,
-                currentCountryNode.centerCoordinate.longitude,
-                this.destinationCountry.latlng[0],
-                this.destinationCountry.latlng[1],
-            ),
+
+            currentCountryNode.distanceBetween(this.destinationCountry),
             (routingResult.getFoundPath()?.slice(-1)[0]?.distanceBetween(currentCountryNode))??0
 
 
@@ -220,17 +206,8 @@ class Router {
 
 
         //let nonPreviousNeighbors=this.graph.neighbors(routingResult.fromCountryCode).filter(x=>x!==previous).map((y)=>({'countryCode':y}));//filtering out previous neighbors (the one we come from)
-        let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {
-            return new CountryNode(
-                neighborKey,
-                new Coordinate(neighborAttributes.latlng[0],neighborAttributes.latlng[1]),
-                neighborAttributes.name.common,
-                neighborAttributes.name.official,
-                neighborAttributes.region,
-                neighborAttributes.subRegion,
-                neighborAttributes.flag,
-                neighborAttributes,
-            );
+        let nonPreviousNeighbors=this.graph.mapNeighbors(routingResult.fromCountryCode,(neighborKey,neighborAttributes)=> {//Isn't there a better way of doing it ?
+            return neighborAttributes.countryNode;
         }).filter(x=>!x.isSameCountryCode(previous));
 
 
