@@ -35,6 +35,13 @@ export default class RoutingResult{
         return this._foundPath;
     }
 
+    isFoundPathEqual(foundPath){
+        //TODO: needs unit test
+        return this.getFoundPath().every(function (traverseCountryNode,index){
+            return traverseCountryNode.isSameCountryNode(foundPath[index]);
+        });
+    }
+
     prependToFoundPath(foundPathEntry){
         //TODO: this is not used sufficiently, use it wherever you can
         this._foundPath=[foundPathEntry,...this._foundPath];
