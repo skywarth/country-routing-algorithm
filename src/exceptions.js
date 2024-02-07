@@ -36,7 +36,7 @@ class NoOtherBorderException extends AbstractRoutingException {
 
     constructor(message,lastRoutingResult,previous) {
         super(message,lastRoutingResult,previous);
-        this.name = 'MaxAllowedMovesAchieved';
+        this.name = `NoOtherBorderException`;
     }
 
 
