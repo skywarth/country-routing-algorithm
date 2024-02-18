@@ -467,3 +467,17 @@ describe('Should prune down redundant traversal path',function () {
         });
     });
 });
+
+
+describe("Should handle island origin countries where there are no moves to make",function () {
+    it('Should not throw error when routing from Aruba to Anguilla', function () {
+        const graphController = new CRA.GraphController(countriesDataset, new Graph());
+        graphController.insertCountriesToGraph();
+        let router = new CRA.Router(graphController.graphInstance, 'ABW', 'AIA');
+        const routingResult = router.findRoute();
+
+        assert.ok(routingResult.getFoundPath().length===1, `FoundPath contains more than one country node`);
+        assert.ok(routingResult.getFoundPath()[0].countryCode==='ABW', `FoundPath's first country node isn't Aruba`);
+        assert.ok(routingResult.isClosest, `RoutingResult is not marked isClosest`);
+    });
+})

@@ -248,7 +248,14 @@ class Router {
 
 
         if(visitableNeighbors.length===0 && routingResult.fromCountryCode!==routingResult.toCountryCode){
-            throw new NoOtherBorderException('backup, backup !!',routingResult,previous);
+            //TODO: perhaps move if-else to the upper layer, findRoute method.
+            if(currentCountryNode.isSameCountryCode(routingResult.fromCountryCode) && routingResult.getFoundPath().length===0){
+                routingResult.appendToFoundPath(currentCountryNode);
+                routingResult.isClosest=true;
+                return response;
+            }else{
+                throw new NoOtherBorderException('backup, backup !!',routingResult,previous);
+            }
         }
 
 
