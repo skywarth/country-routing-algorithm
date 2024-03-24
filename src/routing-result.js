@@ -8,7 +8,16 @@ export default class RoutingResult{
 
     _fromCountryCode='';
     _toCountryCode='';
+    _pruningCount=0;
 
+
+    incrementPruningCount(){
+        return this._pruningCount++;
+    }
+
+    get pruningCount() {
+        return this._pruningCount;
+    }
 
     get isClosest() {
         return this._isClosest;
@@ -60,11 +69,12 @@ export default class RoutingResult{
     }
 
 
-    constructor(foundPath, traversedCountries, fromCountryCode, toCountryCode) {
+    constructor(foundPath, traversedCountries, fromCountryCode, toCountryCode, pruningCount=0) {
         this._foundPath = foundPath;
         this._traversedCountries = traversedCountries;
         this._fromCountryCode = fromCountryCode;
         this._toCountryCode = toCountryCode;
+        this._pruningCount=pruningCount;
     }
 
 
