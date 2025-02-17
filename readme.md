@@ -4,6 +4,8 @@
 
 NPM package: https://www.npmjs.com/package/country-routing-algorithm
 
+**Demo**: https://github.com/skywarth/country-routing-algorithm-demo-vue
+
 
 Not much of a README right now, just fiddle with `page-scripts.js` and see the result on your console.
 
